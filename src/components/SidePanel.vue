@@ -38,8 +38,8 @@ import { ColorPicker } from 'vue-accessible-color-picker';
       toggleEraser(isEraserOn) {
         this.emitter.emit("eraser", isEraserOn)
       },
-      updateColor (eventData) {
-        console.log(eventData)
+      updateColor(eventData) {
+        this.emitter.emit("color", eventData.colors.hex)
       },
       closeColor() {
         this.isColorOpen = false;
