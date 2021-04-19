@@ -1,27 +1,27 @@
 <template>
-  <SidePanel />
-  <Canvas />
+    <SidePanel />
+    <Canvas />
 </template>
 
 <script>
-import Canvas from './components/Canvas.vue'
-import SidePanel from './components/SidePanel.vue'
+import Canvas from './components/Canvas.vue';
+import SidePanel from './components/SidePanel.vue';
 
 export default {
-  name: 'App',
-  components: {
-    Canvas,
-    SidePanel,
-  }
-}
+    name: 'App',
+    components: {
+        Canvas,
+        SidePanel,
+    },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  margin: 0;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    margin: 0;
 }
 body {
-  margin: 0;
+    margin: 0;
 }
 </style>
