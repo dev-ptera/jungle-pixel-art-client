@@ -12,7 +12,6 @@
   <color-picker v-if="isColorOpen"
                 :visible-formats="['hex']"
                 color="#f80b" @color-change="updateColor">
-    <template v-slot:copy-button>asdf</template>
   </color-picker>
   <div id="overlay" v-if="isColorOpen" v-on:click="closeColor()"></div>
 </template>
