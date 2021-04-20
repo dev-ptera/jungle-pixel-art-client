@@ -2,7 +2,7 @@
     <div id="control-panel">
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom *= 1.25))">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom /= 1.25))">zoom_out</button>
-        <button><img src="../assets/eraser.svg" height="24" /></button>
+        <button v-on:click="toggleEraser()"><img src="../assets/eraser.svg" height="24" /></button>
         <button class="material-icons material-icons-outlined" v-on:click="isColorOpen = !isColorOpen">brush</button>
     </div>
 
@@ -21,17 +21,18 @@ export default {
     },
     data() {
         return {
-            zoom: 0.5,
+            zoom: 1,
             isColorOpen: false,
-            isEraserOn: false,
+            eraser: false,
         };
     },
     methods: {
         adjustZoom(newZoom) {
             this.emitter.emit('zoom', newZoom);
         },
-        toggleEraser(isEraserOn) {
-            this.emitter.emit('eraser', isEraserOn);
+        toggleEraser() {
+            this.eraser = !this.eraser;
+            this.emitter.emit('eraser', this.eraser);
         },
         updateColor(eventData) {
             this.emitter.emit('color', eventData.colors.hex);
@@ -54,7 +55,7 @@ export default {
     height: 100vh;
     width: 56px;
     text-align: center;
-    background-color: white;
+    background-color: #2A2A2E;
     border-right: solid 1px darkslategray;
     border-left: solid 1px darkslategray;
 }
@@ -66,15 +67,22 @@ export default {
     padding: 0;
     margin: 0;
     line-height: 56px;
-    background: yellowgreen;
+    border: none;
+    border-bottom: 1px black solid;
+    background: #60c15f;
+    color: whitesmoke;
+}
+#control-panel button:hover {
+    background: #438d43;
+    cursor: pointer;
 }
 .vacp-color-picker {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 180px;
+    left: 15px;
     z-index: 3;
 }
-/deep/ .vacp-copy-button {
+::v-deep .vacp-copy-button {
     display: none;
 }
 #overlay {

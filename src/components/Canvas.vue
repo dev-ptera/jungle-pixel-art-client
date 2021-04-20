@@ -3,13 +3,14 @@
         <canvas
             id="myCanvas"
             oncontextmenu="return false;"
-            v-bind:width="maxCanvasSize"
-            v-bind:height="maxCanvasSize"
+            v-bind:width="maxCanvasWidth"
+            v-bind:height="maxCanvasHeight"
         ></canvas>
     </div>
 </template>
 
 <script>
+
 export default {
     name: 'Canvas',
     data() {
@@ -17,13 +18,20 @@ export default {
             canvas: undefined,
             context: undefined,
             mouseDown: false,
-            zoom: 0.5,
+            zoom: .5,
             fillColor: 'gray',
+            eraser: false,
             cellSize: 7,
-            maxCanvasSize: 7 * 800,
+            maxCanvasSize: 7 * 500,
+            maxCanvasHeight: 7 * 300,
+            maxCanvasWidth: 7 * 540,
             fillSquare(context, x, y) {
-                context.fillStyle = this.fillColor;
-                context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                if (this.eraser) {
+                    context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                } else {
+                    context.fillStyle = this.fillColor;
+                    context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                }
             },
             getSquare(canvas, evt, zoom) {
                 const rect = canvas.getBoundingClientRect();
@@ -42,6 +50,9 @@ export default {
             this.emitter.on('zoom', (zoom) => {
                 this.zoom = zoom;
                 this.canvas.style.zoom = `${this.zoom}`;
+            });
+            this.emitter.on('eraser', (eraser) => {
+                this.eraser = eraser;
             });
         },
         listenForUserEvents() {
@@ -67,13 +78,13 @@ export default {
             this.context = this.canvas.getContext('2d');
             this.canvas.style.zoom = this.zoom;
             // Draw Grid
-            for (let x = 0; x < this.maxCanvasSize + 1; x += this.cellSize) {
+            for (let x = 0; x < this.maxCanvasWidth + 1; x += this.cellSize) {
                 this.context.moveTo(x, 0);
-                this.context.lineTo(x, this.maxCanvasSize);
+                this.context.lineTo(x, this.maxCanvasHeight);
             }
-            for (let y = 0; y < this.maxCanvasSize + 1; y += this.cellSize) {
+            for (let y = 0; y < this.maxCanvasHeight + 1; y += this.cellSize) {
                 this.context.moveTo(0, y);
-                this.context.lineTo(this.maxCanvasSize, y);
+                this.context.lineTo(this.maxCanvasWidth, y);
             }
             this.context.strokeStyle = 'gray';
             this.context.stroke();
@@ -93,5 +104,10 @@ export default {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;
+}
+#myCanvas {
+    background: white;
+    border-bottom: solid 2px red;
+    border-right: solid 2px red;
 }
 </style>
