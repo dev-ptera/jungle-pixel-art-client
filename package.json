@@ -12,8 +12,7 @@
     "core-js": "^3.6.5",
     "mitt": "^2.1.0",
     "vue": "^3.0.0",
-    "vue-accessible-color-picker": "^3.0.0",
-    "vue-color": "^2.8.1"
+    "vue-accessible-color-picker": "^3.0.0"
   },
   "devDependencies": {
     "@pxblue/prettier-config": "^1.0.2",
