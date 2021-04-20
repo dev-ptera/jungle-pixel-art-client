@@ -10,7 +10,6 @@
 </template>
 
 <script>
-
 export default {
     name: 'Canvas',
     data() {
@@ -18,7 +17,7 @@ export default {
             canvas: undefined,
             context: undefined,
             mouseDown: false,
-            zoom: .5,
+            zoom: 0.5,
             fillColor: 'gray',
             eraser: false,
             cellSize: 7,

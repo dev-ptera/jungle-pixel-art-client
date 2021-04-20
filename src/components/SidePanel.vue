@@ -5,7 +5,11 @@
         <button v-on:click="toggleEraser()" style="line-height: 74px">
             <img src="../assets/eraser.svg" height="24" />
         </button>
-        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="isColorOpen = !isColorOpen">
+        <button
+            style="position: relative"
+            class="material-icons material-icons-outlined"
+            v-on:click="isColorOpen = !isColorOpen"
+        >
             brush
             <div class="current-color" :style="{ background: color }"></div>
         </button>
@@ -34,7 +38,6 @@
 <script>
 import { ColorPicker } from 'vue-accessible-color-picker';
 
-
 export default {
     name: 'SidePanel',
     components: {
@@ -57,7 +60,7 @@ export default {
             white: '#ffffff',
             isColorOpen: false,
             eraser: false,
-            color: '#bf0303'
+            color: '#bf0303',
         };
     },
     methods: {
@@ -94,7 +97,7 @@ export default {
     height: 100vh;
     width: 56px;
     text-align: center;
-    background-color: #2A2A2E;
+    background-color: #2a2a2e;
     border-right: solid 1px darkslategray;
     border-left: solid 1px darkslategray;
 }
