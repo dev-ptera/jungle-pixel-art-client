@@ -35,7 +35,7 @@
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
         <button style="position: relative" class="material-icons material-icons-outlined">
-            <div class="shopping-cart-badge" v-if="cart">{{ cart }}</div>
+            <div class="shopping-cart-badge" v-if="pixelCount">{{ pixelCount }}</div>
             shopping_cart
         </button>
     </div>
@@ -56,7 +56,7 @@ export default {
     data() {
         return {
             zoom: 0.5,
-            cart: 0,
+            pixelCount: 0,
             red: '#bf0303',
             orange: '#f8be12',
             yellow: '#f6f110',
@@ -102,8 +102,8 @@ export default {
         },
     },
     mounted() {
-        this.emitter.on('cart', (cart) => {
-            this.cart = cart;
+        this.emitter.on('pixelCount', (pixelCount) => {
+            this.pixelCount = pixelCount;
         });
     },
 };

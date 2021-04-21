@@ -38,7 +38,7 @@ export default {
                     context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
                     this.pixels.set(pixelKey, this.fillColor);
                 }
-                this.emitter.emit('cart', this.pixels.size);
+                this.emitter.emit('pixelCount', this.pixels.size);
             },
             getSquare(canvas, evt, zoom) {
                 const rect = canvas.getBoundingClientRect();
