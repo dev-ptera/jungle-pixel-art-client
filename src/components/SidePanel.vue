@@ -2,9 +2,14 @@
     <div id="control-panel">
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom *= 1.25))">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom /= 1.25))">zoom_out</button>
-        <button v-on:click="toggleEraser()" style="line-height: 74px" :style="{ background: eraser ? '#277125' : '#60c15f' }">
+        <button
+            v-on:click="toggleEraser()"
+            style="line-height: 74px"
+            :style="{ background: eraser ? '#277125' : '#60c15f' }"
+        >
             <img src="../assets/eraser.svg" height="24" />
         </button>
+        <button class="material-icons material-icons-outlined" v-on:click="toggleGrid()">grid_4x4</button>
         <button
             style="position: relative"
             class="material-icons material-icons-outlined"
@@ -50,7 +55,7 @@ export default {
     },
     data() {
         return {
-            zoom: 1,
+            zoom: 0.5,
             cart: 0,
             red: '#bf0303',
             orange: '#f8be12',
@@ -67,6 +72,7 @@ export default {
             isColorOpen: false,
             eraser: false,
             color: '#bf0303',
+            showGrid: true,
         };
     },
     methods: {
@@ -77,6 +83,10 @@ export default {
             this.eraser = !this.eraser;
             this.emitter.emit('eraser', this.eraser);
         },
+        toggleGrid() {
+            this.showGrid = !this.showGrid;
+            this.emitter.emit('grid', this.showGrid);
+        },
         updateColor(eventData) {
             this.color = eventData.colors.hex;
             this.emitter.emit('color', this.color);
@@ -86,7 +96,6 @@ export default {
             this.emitter.emit('color', this.color);
             this.eraser = false;
             this.emitter.emit('eraser', this.eraser);
-
         },
         closeColor() {
             this.isColorOpen = false;

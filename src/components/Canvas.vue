@@ -26,7 +26,7 @@ export default {
             maxCanvasHeight: 6 * 340,
             maxCanvasWidth: 6 * 580,
             fillSquare(context, x, y) {
-                const pixelKey = `${x},${y}`
+                const pixelKey = `${x},${y}`;
                 if (this.eraser) {
                     if (!this.pixels.get(pixelKey)) {
                         return;
@@ -54,6 +54,9 @@ export default {
             this.emitter.on('color', (color) => {
                 this.fillColor = color;
             });
+            this.emitter.on('grid', (showGrid) => {
+                this.drawGrid(showGrid ? 'gray' : 'white');
+            });
             this.emitter.on('zoom', (zoom) => {
                 this.zoom = zoom;
                 this.canvas.style.zoom = `${this.zoom}`;
@@ -80,7 +83,7 @@ export default {
                 }
             });
         },
-        drawGrid() {
+        drawGrid(color) {
             this.canvas = document.getElementById('myCanvas');
             this.context = this.canvas.getContext('2d');
             this.canvas.style.zoom = this.zoom;
@@ -93,12 +96,12 @@ export default {
                 this.context.moveTo(0, y);
                 this.context.lineTo(this.maxCanvasWidth, y);
             }
-            this.context.strokeStyle = 'gray';
+            this.context.strokeStyle = color;
             this.context.stroke();
         },
     },
     mounted() {
-        this.drawGrid();
+        this.drawGrid('gray');
         this.listenForUserEvents();
         this.listenForControlPanel();
     },
