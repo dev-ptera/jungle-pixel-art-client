@@ -2,7 +2,7 @@
     <div id="control-panel">
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom *= 1.25))">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom /= 1.25))">zoom_out</button>
-        <button v-on:click="toggleEraser()" style="line-height: 74px">
+        <button v-on:click="toggleEraser()" style="line-height: 74px" :style="{ background: eraser ? '#277125' : '#60c15f' }">
             <img src="../assets/eraser.svg" height="24" />
         </button>
         <button
@@ -28,6 +28,11 @@
             <button :style="{ background: gray }" v-on:click="swatchColor(gray)"></button>
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
         </div>
+        <div style="display: flex; flex: 1 1 0"></div>
+        <button style="position: relative" class="material-icons material-icons-outlined">
+            <div class="shopping-cart-badge" v-if="cart">{{ cart }}</div>
+            shopping_cart
+        </button>
     </div>
 
     <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor">
@@ -46,6 +51,7 @@ export default {
     data() {
         return {
             zoom: 1,
+            cart: 0,
             red: '#bf0303',
             orange: '#f8be12',
             yellow: '#f6f110',
@@ -78,10 +84,18 @@ export default {
         swatchColor(color) {
             this.color = color;
             this.emitter.emit('color', this.color);
+            this.eraser = false;
+            this.emitter.emit('eraser', this.eraser);
+
         },
         closeColor() {
             this.isColorOpen = false;
         },
+    },
+    mounted() {
+        this.emitter.on('cart', (cart) => {
+            this.cart = cart;
+        });
     },
 };
 </script>
@@ -148,5 +162,22 @@ export default {
     height: 8px;
     width: 8px;
     border: solid 1px white;
+}
+.shopping-cart-badge {
+    position: absolute;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    top: 4px;
+    right: 2px;
+    min-height: 10px;
+    min-width: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 10px;
+    padding: 4px;
+    text-align: center;
+    border: solid 1px white;
+    color: white;
+    background: #438d43;
+    border-radius: 50%;
 }
 </style>

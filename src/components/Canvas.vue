@@ -17,20 +17,28 @@ export default {
             canvas: undefined,
             context: undefined,
             mouseDown: false,
+            pixels: new Map(),
             zoom: 0.5,
-            fillColor: 'gray',
+            fillColor: '#bf0303',
             eraser: false,
-            cellSize: 7,
+            cellSize: 6,
             maxCanvasSize: 7 * 500,
-            maxCanvasHeight: 7 * 300,
-            maxCanvasWidth: 7 * 540,
+            maxCanvasHeight: 6 * 340,
+            maxCanvasWidth: 6 * 580,
             fillSquare(context, x, y) {
+                const pixelKey = `${x},${y}`
                 if (this.eraser) {
+                    if (!this.pixels.get(pixelKey)) {
+                        return;
+                    }
                     context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                    this.pixels.delete(pixelKey);
                 } else {
                     context.fillStyle = this.fillColor;
                     context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                    this.pixels.set(pixelKey, this.fillColor);
                 }
+                this.emitter.emit('cart', this.pixels.size);
             },
             getSquare(canvas, evt, zoom) {
                 const rect = canvas.getBoundingClientRect();
