@@ -22,7 +22,6 @@ export default {
             fillColor: '#bf0303',
             eraser: false,
             cellSize: 6,
-            maxCanvasSize: 7 * 500,
             maxCanvasHeight: 6 * 340,
             maxCanvasWidth: 6 * 580,
             fillSquare(context, x, y) {
@@ -63,6 +62,9 @@ export default {
             });
             this.emitter.on('eraser', (eraser) => {
                 this.eraser = eraser;
+            });
+            this.emitter.on('checkout', () => {
+                this.emitter.emit('pixels', this.pixels);
             });
         },
         listenForUserEvents() {

@@ -10,11 +10,7 @@
             <img src="../assets/eraser.svg" height="24" />
         </button>
         <button class="material-icons material-icons-outlined" v-on:click="toggleGrid()">grid_4x4</button>
-        <button
-            style="position: relative"
-            class="material-icons material-icons-outlined"
-            v-on:click="showColor"
-        >
+        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
             brush
             <div class="current-color" :style="{ background: color }"></div>
         </button>
@@ -34,7 +30,7 @@
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
-        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showModal">
+        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="openCheckout">
             <div class="shopping-cart-badge" v-if="pixelCount">{{ pixelCount }}</div>
             shopping_cart
         </button>
@@ -43,21 +39,18 @@
     <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor" />
     <div id="overlay" v-if="isColorOpen" v-on:click="closeColor"></div>
 
-    <Checkout
-        v-show="showCheckout"
-        @close="closeModal"
-    />
+    <Checkout v-show="showCheckout" @close="closeCheckout" />
 </template>
 
 <script>
 import { ColorPicker } from 'vue-accessible-color-picker';
-import Checkout from "./Checkout";
+import Checkout from './Checkout';
 
 export default {
     name: 'SidePanel',
     components: {
         ColorPicker,
-        Checkout
+        Checkout,
     },
     data() {
         return {
@@ -110,12 +103,15 @@ export default {
         closeColor() {
             this.isColorOpen = false;
         },
-        showModal() {
-            this.showCheckout = true;
+        openCheckout() {
+            if (this.pixelCount > 0) {
+                this.showCheckout = true;
+                this.emitter.emit('checkout');
+            }
         },
-        closeModal() {
+        closeCheckout() {
             this.showCheckout = false;
-        }
+        },
     },
     mounted() {
         this.emitter.on('pixelCount', (pixelCount) => {
