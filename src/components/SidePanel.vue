@@ -40,18 +40,24 @@
         </button>
     </div>
 
-    <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor">
-    </color-picker>
+    <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor" />
     <div id="overlay" v-if="isColorOpen" v-on:click="closeColor()"></div>
+
+    <Checkout
+        v-show="showCheckout"
+        @close="closeModal"
+    />
 </template>
 
 <script>
 import { ColorPicker } from 'vue-accessible-color-picker';
+import Checkout from "./Checkout";
 
 export default {
     name: 'SidePanel',
     components: {
         ColorPicker,
+        Checkout
     },
     data() {
         return {
@@ -73,6 +79,7 @@ export default {
             eraser: false,
             color: '#bf0303',
             showGrid: true,
+            showCheckout: false,
         };
     },
     methods: {
@@ -100,6 +107,12 @@ export default {
         closeColor() {
             this.isColorOpen = false;
         },
+        showModal() {
+            this.showCheckout = true;
+        },
+        closeModal() {
+            this.showCheckout = false;
+        }
     },
     mounted() {
         this.emitter.on('pixelCount', (pixelCount) => {
