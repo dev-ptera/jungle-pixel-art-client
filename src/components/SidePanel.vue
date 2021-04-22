@@ -13,7 +13,7 @@
         <button
             style="position: relative"
             class="material-icons material-icons-outlined"
-            v-on:click="isColorOpen = !isColorOpen"
+            v-on:click="showColor"
         >
             brush
             <div class="current-color" :style="{ background: color }"></div>
@@ -34,14 +34,14 @@
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
-        <button style="position: relative" class="material-icons material-icons-outlined">
+        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showModal">
             <div class="shopping-cart-badge" v-if="pixelCount">{{ pixelCount }}</div>
             shopping_cart
         </button>
     </div>
 
     <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor" />
-    <div id="overlay" v-if="isColorOpen" v-on:click="closeColor()"></div>
+    <div id="overlay" v-if="isColorOpen" v-on:click="closeColor"></div>
 
     <Checkout
         v-show="showCheckout"
@@ -103,6 +103,9 @@ export default {
             this.emitter.emit('color', this.color);
             this.eraser = false;
             this.emitter.emit('eraser', this.eraser);
+        },
+        showColor() {
+            this.isColorOpen = true;
         },
         closeColor() {
             this.isColorOpen = false;
