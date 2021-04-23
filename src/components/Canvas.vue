@@ -11,7 +11,7 @@
 
 <script>
 import * as UserEvents from '../constants/app-events';
-import * as Defaults from "../constants/app-defaults";
+import * as Defaults from '../constants/app-defaults';
 
 export default {
     name: 'Canvas',

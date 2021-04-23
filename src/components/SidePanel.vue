@@ -50,7 +50,6 @@
 </template>
 
 <script>
-
 import { ColorPicker } from 'vue-accessible-color-picker';
 import Checkout from './Checkout';
 
@@ -139,7 +138,7 @@ export default {
         },
     },
     mounted() {
-        this.isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+        this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
         this.emitter.on(UserEvents.PIXEL_COUNT, (pixelCount) => {
             this.pixelCount = pixelCount;
         });
@@ -148,7 +147,7 @@ export default {
             setTimeout(() => {
                 this.screenLock = true;
                 this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
-            })
+            });
         }
     },
 };
