@@ -3,7 +3,7 @@
         <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
         <button
-            v-on:click="toggleEraser()"
+            v-on:click="toggleEraser"
             style="line-height: 74px"
             :style="{ background: eraser ? '#277125' : '#60c15f' }"
         >
@@ -11,8 +11,9 @@
         </button>
         <button
             class="material-icons material-icons-outlined screenLockButton"
+            v-if:="isTouchDevice"
             v-bind:class="{ screenLock: screenLock }"
-            v-on:click="togglescreenLock()"
+            v-on:click="toggleScreenLock"
         >
             phonelink_lock
         </button>
@@ -83,6 +84,7 @@ export default {
             screenLock: Defaults.SCREEN_LOCK,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
+            isTouchDevice: undefined,
         };
     },
     methods: {
@@ -96,13 +98,15 @@ export default {
             this.emitter.emit(UserEvents.ZOOM, zoom);
             evt.preventDefault();
         },
-        toggleEraser() {
+        toggleEraser(evt) {
             this.eraser = !this.eraser;
             this.emitter.emit(UserEvents.ERASER, this.eraser);
+            evt.preventDefault();
         },
-        togglescreenLock() {
+        toggleScreenLock(evt) {
             this.screenLock = !this.screenLock;
             this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
+            evt.preventDefault();
         },
         updateColor(eventData) {
             this.color = eventData.colors.hex;
@@ -114,26 +118,38 @@ export default {
             this.emitter.emit(UserEvents.COLOR, this.color);
             this.emitter.emit(UserEvents.ERASER, this.eraser);
         },
-        showColor() {
+        showColor(evt) {
             this.isColorOpen = true;
+            evt.preventDefault();
         },
-        closeColor() {
+        closeColor(evt) {
             this.isColorOpen = false;
+            evt.preventDefault();
         },
-        openCheckout() {
+        openCheckout(evt) {
             if (this.pixelCount > 0) {
                 this.showCheckout = true;
                 this.emitter.emit(UserEvents.CHECKOUT);
             }
+            evt.preventDefault();
         },
-        closeCheckout() {
+        closeCheckout(evt) {
             this.showCheckout = false;
+            evt.preventDefault();
         },
     },
     mounted() {
+        this.isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
         this.emitter.on(UserEvents.PIXEL_COUNT, (pixelCount) => {
             this.pixelCount = pixelCount;
         });
+        /* Enable screen lock for touch devices on load. */
+        if (this.isTouchDevice) {
+            setTimeout(() => {
+                this.screenLock = true;
+                this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
+            })
+        }
     },
 };
 </script>

@@ -74,6 +74,9 @@ export default {
             this.canvas.addEventListener(
                 'click',
                 (evt) => {
+                    if (this.screenLock) {
+                        return;
+                    }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
                     this.fillSquare(this.context, mousePos.x, mousePos.y);
                 },
