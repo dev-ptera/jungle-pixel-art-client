@@ -1,7 +1,7 @@
 <template>
     <div id="control-panel">
-        <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom *= 1.25))">zoom_in</button>
-        <button class="material-icons material-icons-outlined" v-on:click="adjustZoom((zoom /= 1.25))">zoom_out</button>
+        <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
+        <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
         <button
             v-on:click="toggleEraser()"
             style="line-height: 74px"
@@ -9,7 +9,13 @@
         >
             <img src="../assets/eraser.svg" height="24" />
         </button>
-        <button class="material-icons material-icons-outlined" v-on:click="toggleGrid()">grid_4x4</button>
+        <button
+            class="material-icons material-icons-outlined scrollLockButton"
+            v-bind:class="{ scrollLock: scrollLock }"
+            v-on:click="toggleScrollLock()"
+        >
+            phonelink_lock
+        </button>
         <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
             brush
             <div class="current-color" :style="{ background: color }"></div>
@@ -54,7 +60,7 @@ export default {
     },
     data() {
         return {
-            zoom: 0.5,
+            zoom: 1,
             pixelCount: 0,
             red: '#bf0303',
             orange: '#f8be12',
@@ -68,24 +74,32 @@ export default {
             black: '#151515',
             gray: '#8b8b8b',
             white: '#ffffff',
+            color: '#bf0303',
+            scrollLock: false,
+            showCheckout: false,
             isColorOpen: false,
             eraser: false,
-            color: '#bf0303',
-            showGrid: false,
-            showCheckout: false,
         };
     },
     methods: {
-        adjustZoom(newZoom) {
-            this.emitter.emit('zoom', newZoom);
+        increaseZoom(evt) {
+            this.adjustZoom((this.zoom *= 1.25));
+            evt.preventDefault();
+        },
+        decreaseZoom(evt) {
+            this.adjustZoom((this.zoom /= 1.25));
+            evt.preventDefault();
+        },
+        adjustZoom(zoom) {
+            this.emitter.emit('zoom', zoom);
         },
         toggleEraser() {
             this.eraser = !this.eraser;
             this.emitter.emit('eraser', this.eraser);
         },
-        toggleGrid() {
-            this.showGrid = !this.showGrid;
-            this.emitter.emit('grid', this.showGrid);
+        toggleScrollLock() {
+            this.scrollLock = !this.scrollLock;
+            this.emitter.emit('scrollLock', this.scrollLock);
         },
         updateColor(eventData) {
             this.color = eventData.colors.hex;
@@ -147,9 +161,13 @@ export default {
     background: #60c15f;
     color: #101010;
 }
-#control-panel button:hover {
+#control-panel button:hover,
+#control-panel .scrollLock {
     background: #438d43;
     cursor: pointer;
+}
+#control-panel .scrollLockButton:not(.scrollLock) {
+    background: #60c15f;
 }
 #control-panel .swatches button {
     width: 28px;
