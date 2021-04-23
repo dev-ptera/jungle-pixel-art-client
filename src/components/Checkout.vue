@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import * as UserEvents from '../constants/app-events';
+
 export default {
     name: 'Checkout',
     methods: {
@@ -48,7 +50,7 @@ export default {
         };
     },
     mounted() {
-        this.emitter.on('pixels', (pixels) => {
+        this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
             this.pixels = pixels;
             const QRCode = require('qrcode');
             const canvas = document.getElementById('qr-code');

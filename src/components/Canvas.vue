@@ -10,6 +10,9 @@
 </template>
 
 <script>
+import * as UserEvents from '../constants/app-events';
+import * as Defaults from "../constants/app-defaults";
+
 export default {
     name: 'Canvas',
     data() {
@@ -18,34 +21,34 @@ export default {
             context: undefined,
             mouseDown: false,
             pixels: new Map(),
-            zoom: 1,
-            scrollLock: false,
-            fillColor: '#bf0303',
-            eraser: false,
             cellSize: 6,
             maxCanvasHeight: 6 * 600,
             maxCanvasWidth: 6 * 600,
-            touchX: 0,
-            touchY: 0,
+            zoom: Defaults.ZOOM,
+            eraser: Defaults.ERASER,
+            fillColor: Defaults.FILL_COLOR,
+            screenLock: Defaults.SCREEN_LOCK,
+            isColorOpen: Defaults.COLOR_OPEN,
+            showCheckout: Defaults.SHOW_CHECKOUT,
         };
     },
     methods: {
         listenForControlPanel() {
-            this.emitter.on('color', (color) => {
+            this.emitter.on(UserEvents.COLOR, (color) => {
                 this.fillColor = color;
             });
-            this.emitter.on('scrollLock', (scrollLock) => {
-                this.scrollLock = scrollLock;
+            this.emitter.on(UserEvents.SCREEN_LOCK, (screenLock) => {
+                this.screenLock = screenLock;
             });
-            this.emitter.on('zoom', (zoom) => {
+            this.emitter.on(UserEvents.ZOOM, (zoom) => {
                 this.zoom = zoom;
                 this.canvas.style.zoom = `${this.zoom}`;
             });
-            this.emitter.on('eraser', (eraser) => {
+            this.emitter.on(UserEvents.ERASER, (eraser) => {
                 this.eraser = eraser;
             });
-            this.emitter.on('checkout', () => {
-                this.emitter.emit('pixels', this.pixels);
+            this.emitter.on(UserEvents.CHECKOUT, () => {
+                this.emitter.emit(UserEvents.CHECKOUT_PIXELS, this.pixels);
             });
         },
         listenForUserEvents() {
@@ -53,7 +56,7 @@ export default {
             this.canvas.addEventListener(
                 'touchmove',
                 (evt) => {
-                    if (this.scrollLock) {
+                    if (this.screenLock) {
                         return;
                     }
                     if (evt.touches && evt.touches.length === 1) {
@@ -90,7 +93,6 @@ export default {
         drawGrid(color) {
             this.canvas = document.getElementById('myCanvas');
             this.context = this.canvas.getContext('2d');
-            //  this.context.clearRect(0, 0, this.maxCanvasWidth, this.maxCanvasHeight);
             this.canvas.style.zoom = this.zoom;
             // Draw Grid
             for (let x = 0; x < this.maxCanvasWidth + 1; x += this.cellSize) {
@@ -117,7 +119,7 @@ export default {
                 context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.set(pixelKey, this.fillColor);
             }
-            this.emitter.emit('pixelCount', this.pixels.size);
+            this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
         },
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();

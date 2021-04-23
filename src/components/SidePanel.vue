@@ -10,9 +10,9 @@
             <img src="../assets/eraser.svg" height="24" />
         </button>
         <button
-            class="material-icons material-icons-outlined scrollLockButton"
-            v-bind:class="{ scrollLock: scrollLock }"
-            v-on:click="toggleScrollLock()"
+            class="material-icons material-icons-outlined screenLockButton"
+            v-bind:class="{ screenLock: screenLock }"
+            v-on:click="togglescreenLock()"
         >
             phonelink_lock
         </button>
@@ -49,8 +49,12 @@
 </template>
 
 <script>
+
 import { ColorPicker } from 'vue-accessible-color-picker';
 import Checkout from './Checkout';
+
+import * as UserEvents from '../constants/app-events';
+import * as Defaults from '../constants/app-defaults';
 
 export default {
     name: 'SidePanel',
@@ -60,7 +64,6 @@ export default {
     },
     data() {
         return {
-            zoom: 1,
             pixelCount: 0,
             red: '#bf0303',
             orange: '#f8be12',
@@ -75,41 +78,41 @@ export default {
             gray: '#8b8b8b',
             white: '#ffffff',
             color: '#bf0303',
-            scrollLock: false,
-            showCheckout: false,
-            isColorOpen: false,
-            eraser: false,
+            zoom: Defaults.ZOOM,
+            eraser: Defaults.ERASER,
+            screenLock: Defaults.SCREEN_LOCK,
+            isColorOpen: Defaults.COLOR_OPEN,
+            showCheckout: Defaults.SHOW_CHECKOUT,
         };
     },
     methods: {
         increaseZoom(evt) {
-            this.adjustZoom((this.zoom *= 1.25));
-            evt.preventDefault();
+            this.adjustZoom((this.zoom *= 1.25), evt);
         },
         decreaseZoom(evt) {
-            this.adjustZoom((this.zoom /= 1.25));
-            evt.preventDefault();
+            this.adjustZoom((this.zoom /= 1.25), evt);
         },
-        adjustZoom(zoom) {
-            this.emitter.emit('zoom', zoom);
+        adjustZoom(zoom, evt) {
+            this.emitter.emit(UserEvents.ZOOM, zoom);
+            evt.preventDefault();
         },
         toggleEraser() {
             this.eraser = !this.eraser;
-            this.emitter.emit('eraser', this.eraser);
+            this.emitter.emit(UserEvents.ERASER, this.eraser);
         },
-        toggleScrollLock() {
-            this.scrollLock = !this.scrollLock;
-            this.emitter.emit('scrollLock', this.scrollLock);
+        togglescreenLock() {
+            this.screenLock = !this.screenLock;
+            this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
         },
         updateColor(eventData) {
             this.color = eventData.colors.hex;
-            this.emitter.emit('color', this.color);
+            this.emitter.emit(UserEvents.COLOR, this.color);
         },
         swatchColor(color) {
             this.color = color;
-            this.emitter.emit('color', this.color);
             this.eraser = false;
-            this.emitter.emit('eraser', this.eraser);
+            this.emitter.emit(UserEvents.COLOR, this.color);
+            this.emitter.emit(UserEvents.ERASER, this.eraser);
         },
         showColor() {
             this.isColorOpen = true;
@@ -120,7 +123,7 @@ export default {
         openCheckout() {
             if (this.pixelCount > 0) {
                 this.showCheckout = true;
-                this.emitter.emit('checkout');
+                this.emitter.emit(UserEvents.CHECKOUT);
             }
         },
         closeCheckout() {
@@ -128,7 +131,7 @@ export default {
         },
     },
     mounted() {
-        this.emitter.on('pixelCount', (pixelCount) => {
+        this.emitter.on(UserEvents.PIXEL_COUNT, (pixelCount) => {
             this.pixelCount = pixelCount;
         });
     },
@@ -162,11 +165,11 @@ export default {
     color: #101010;
 }
 #control-panel button:hover,
-#control-panel .scrollLock {
+#control-panel .screenLock {
     background: #438d43;
     cursor: pointer;
 }
-#control-panel .scrollLockButton:not(.scrollLock) {
+#control-panel .screenLockButton:not(.screenLock) {
     background: #60c15f;
 }
 #control-panel .swatches button {
