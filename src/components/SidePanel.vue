@@ -71,7 +71,7 @@ export default {
             isColorOpen: false,
             eraser: false,
             color: '#bf0303',
-            showGrid: true,
+            showGrid: false,
             showCheckout: false,
         };
     },
