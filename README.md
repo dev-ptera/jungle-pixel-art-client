@@ -1,4 +1,4 @@
-# monkey-paints
+# jungle pixel art
 
 ## Project setup
 ```
