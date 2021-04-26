@@ -1,6 +1,6 @@
 {
-  "name": "monkey-paints",
-  "version": "0.1.0",
+  "name": "jungle-pixel-art-client",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
