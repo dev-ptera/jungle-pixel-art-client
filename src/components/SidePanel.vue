@@ -41,7 +41,7 @@
         </button>
     </div>
 
-    <color-picker v-if="isColorOpen" :visible-formats="['hex']" color="#f80b" @color-change="updateColor" />
+    <color-picker v-if="isColorOpen" :visible-formats="[]" color="#f80b" @color-change="updateColor" />
     <div id="overlay" v-if="isColorOpen" v-on:click="closeColor"></div>
 
     <Checkout v-show="showCheckout" @close="closeCheckout" />
@@ -179,7 +179,7 @@ export default {
 }
 #control-panel:not(.isTouchDevice) button:hover,
 #control-panel #scrollLockButton:not(.screenLock) {
-    background: #438d43;
+    background: #277125;
     cursor: pointer;
 }
 #control-panel #scrollLockButton.screenLock {
@@ -193,9 +193,10 @@ export default {
     position: fixed;
     top: 200px;
     left: 30px;
+    width: 300px;
     z-index: 3;
 }
-::v-deep .vacp-copy-button {
+::v-deep .vacp-copy-button, ::v-deep .vacp-color-input-group {
     display: none;
 }
 #overlay {

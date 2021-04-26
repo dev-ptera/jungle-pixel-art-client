@@ -75,6 +75,7 @@ export default {
                 'click',
                 (evt) => {
                     if (this.screenLock) {
+                        console.log('locked');
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
@@ -117,7 +118,11 @@ export default {
                 }
                 context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.delete(pixelKey);
-            } else {
+            // Block is empty (available) or must be re-colored
+            } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
+                if (this.pixels.get(pixelKey)) {
+                    context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                }
                 context.fillStyle = this.fillColor;
                 context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.set(pixelKey, this.fillColor);
