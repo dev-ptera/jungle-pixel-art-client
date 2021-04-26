@@ -1,5 +1,6 @@
 <template>
-    <div id="control-panel">
+    <div id="control-panel"
+         v-bind:class="{ isTouchDevice: isTouchDevice }">
         <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
         <button
@@ -9,19 +10,16 @@
         >
             <img src="../assets/eraser.svg" height="24" />
         </button>
-        <button
-            class="material-icons material-icons-outlined screenLockButton"
-            v-if:="isTouchDevice"
-            v-bind:class="{ screenLock: screenLock }"
-            v-on:click="toggleScreenLock"
-        >
-            phonelink_lock
+        <button id="scrollLockButton" style="position: relative" class="material-icons material-icons-outlined"
+                v-if:="isTouchDevice"
+                v-bind:class="{ screenLock: screenLock }"
+                v-on:click="toggleScreenLock">
+            brush
         </button>
         <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
-            brush
+            palette
             <div class="current-color" :style="{ background: color }"></div>
         </button>
-
         <div class="swatches">
             <button :style="{ background: red }" v-on:click="swatchColor(red)"></button>
             <button :style="{ background: orange }" v-on:click="swatchColor(orange)"></button>
@@ -80,7 +78,7 @@ export default {
             color: '#bf0303',
             zoom: Defaults.ZOOM,
             eraser: Defaults.ERASER,
-            screenLock: Defaults.SCREEN_LOCK,
+            screenLock: false,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
             isTouchDevice: undefined,
@@ -179,12 +177,12 @@ export default {
     background: #60c15f;
     color: #101010;
 }
-#control-panel button:hover,
-#control-panel .screenLock {
+#control-panel:not(.isTouchDevice) button:hover,
+#control-panel #scrollLockButton:not(.screenLock) {
     background: #438d43;
     cursor: pointer;
 }
-#control-panel .screenLockButton:not(.screenLock) {
+#control-panel #scrollLockButton.screenLock {
     background: #60c15f;
 }
 #control-panel .swatches button {
