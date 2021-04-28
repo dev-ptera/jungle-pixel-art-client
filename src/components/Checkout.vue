@@ -11,25 +11,28 @@
                 </button>
             </header>
 
-            <section v-if="!error" class="modal-body">
-                <canvas v-if="paymentAddress" id="qr-code"></canvas>
-                <div v-if="!paymentAddress" id="loading-state">
-                    <div class="loader"></div>
-                </div>
-                <div v-if="!paymentAddress" class="instructions">
-                    Loading payment address
-                </div>
-                <div v-if="paymentAddress" class="instructions">
-                    To share your work of art with the world, send <strong>{{ this.size }}</strong> bananos to:
-                </div>
-                <div class="payment-address">{{ this.paymentAddress }}</div>
+            <section v-if="!paymentSuccess">
+                <section v-if="!error" class="modal-body">
+                    <canvas v-if="paymentAddress" id="qr-code"></canvas>
+                    <div v-if="!paymentAddress" id="loading-state">
+                        <div class="loader"></div>
+                    </div>
+                    <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
+                    <div v-if="paymentAddress" class="instructions">
+                        To share your work of art with the world, send <strong>{{ size }}</strong> bananos to:
+                    </div>
+                    <div class="payment-address">{{ paymentAddress }}</div>
+                </section>
+
+                <section v-if="error" class="modal-body">
+                    <div style="font-size: 64px; margin-top: 64px">Error</div>
+                    <div v-if="error" class="instructions">{{ error }}</div>
+                </section>
+            </section>
+            <section v-if="paymentSuccess">
+                <div>SUCCESSS!!!!</div>
             </section>
 
-
-            <section v-if="error" class="modal-body">
-                <div style="font-size: 64px; margin-top: 64px">Error</div>
-                <div v-if="error" class="instructions">{{this.error}}</div>
-            </section>
 
             <div style="display: flex; flex: 1 1 0"></div>
 
@@ -44,42 +47,52 @@
 
 <script>
 import * as UserEvents from '../constants/app-events';
-import { getPaymentAddress } from "../api";
+import { getPaymentAddress } from '../api';
 
 export default {
     name: 'Checkout',
     methods: {
         close() {
             this.pixels = undefined;
+            this.size = undefined;
+            this.error = undefined;
+            this.rawAmount = undefined;
             this.paymentAddress = undefined;
+            this.paymentSuccess = undefined;
             this.$emit('close');
         },
         openKalium() {
-            return `ban:${this.paymentAddress}?amount=TODO`;
+            return `ban:${this.paymentAddress}?amount=${this.rawAmount}`;
         },
     },
     data() {
         return {
             pixels: new Map(),
             error: undefined,
+            size: undefined,
+            paymentSuccess: undefined,
             paymentAddress: undefined,
+            rawAmount: undefined
         };
     },
     mounted() {
-        this.emitter.on(UserEvents.PAYMENT_ADDRESS, (address) => {
-            this.paymentAddress = address;
+        this.emitter.on(UserEvents.PAYMENT_ADDRESS, (data) => {
+            this.paymentAddress = data.address;
+            this.rawAmount = data.raw;
             setTimeout(() => {
                 const QRCode = require('qrcode');
                 const canvas = document.getElementById('qr-code');
-                QRCode.toCanvas(canvas, this.paymentAddress, function (error) {
+                QRCode.toCanvas(canvas, this.openKalium(), function (error) {
                     if (error) console.error(error);
                 });
-            })
+            });
         });
         this.emitter.on(UserEvents.CHECKOUT_ERROR, (error) => {
-
             this.error = error;
-        })
+        });
+        this.emitter.on(UserEvents.PAYMENT_SUCCESS, () => {
+            this.paymentSuccess = true;
+        });
         this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
             this.pixels = pixels;
             this.size = pixels.size;
@@ -89,7 +102,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #qr-code {
     height: 180px !important;
     width: 180px !important;
@@ -184,7 +197,7 @@ export default {
     width: 100%;
 }
 .pay-button[disabled] {
-    opacity: .5;
+    opacity: 0.5;
 }
 
 #loading-state {
@@ -204,7 +217,11 @@ export default {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>

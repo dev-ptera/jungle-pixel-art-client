@@ -1,15 +1,18 @@
 <template>
+    <Welcome />
     <SidePanel />
     <Canvas />
 </template>
 
 <script>
+import Welcome from './components/Welcome.vue';
 import Canvas from './components/Canvas.vue';
 import SidePanel from './components/SidePanel.vue';
 
 export default {
     name: 'App',
     components: {
+        Welcome,
         Canvas,
         SidePanel,
     },

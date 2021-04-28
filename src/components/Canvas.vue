@@ -12,6 +12,7 @@
 <script>
 import * as UserEvents from '../constants/app-events';
 import * as Defaults from '../constants/app-defaults';
+import {getBoard} from "../api";
 
 export default {
     name: 'Canvas',
@@ -21,6 +22,7 @@ export default {
             context: undefined,
             mouseDown: false,
             pixels: new Map(),
+            confirmedPixels: new Map(),
             cellSize: 6,
             maxCanvasHeight: 6 * 600,
             maxCanvasWidth: 6 * 600,
@@ -62,7 +64,7 @@ export default {
                     if (evt.touches && evt.touches.length === 1) {
                         const touch = evt.touches[0]; // Get the information for finger #1
                         const touchPos = this.getSquare(touch.pageX, touch.pageY);
-                        this.fillSquare(this.context, touchPos.x, touchPos.y);
+                        this.fillSquare(touchPos.x, touchPos.y);
                     }
                     evt.preventDefault();
                 },
@@ -75,11 +77,10 @@ export default {
                 'click',
                 (evt) => {
                     if (this.screenLock) {
-                        console.log('locked');
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.fillSquare(this.context, mousePos.x, mousePos.y);
+                    this.fillSquare(mousePos.x, mousePos.y);
                 },
                 false
             );
@@ -88,11 +89,14 @@ export default {
                 (evt) => {
                     if (this.mouseDown) {
                         const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                        this.fillSquare(this.context, mousePos.x, mousePos.y);
+                        this.fillSquare(mousePos.x, mousePos.y);
                     }
                 },
                 false
             );
+        },
+        makeKey(x, y) {
+            return `${x},${y}`;
         },
         drawGrid(color) {
             this.canvas = document.getElementById('myCanvas');
@@ -110,21 +114,27 @@ export default {
             this.context.strokeStyle = color;
             this.context.stroke();
         },
-        fillSquare(context, x, y) {
-            const pixelKey = `${x},${y}`;
+        fillSquare(x, y) {
+            const pixelKey = this.makeKey(x,y);
+            /* Uneditable pixel */
+            if (this.confirmedPixels.has(pixelKey)) {
+                return;
+            }
+            /* Remove pixel */
             if (this.eraser) {
                 if (!this.pixels.get(pixelKey)) {
                     return;
                 }
-                context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.delete(pixelKey);
-            // Block is empty (available) or must be re-colored
-            } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
+            }
+            /* New/edit pixel */
+            else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
                 if (this.pixels.get(pixelKey)) {
-                    context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                    this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 }
-                context.fillStyle = this.fillColor;
-                context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                this.context.fillStyle = this.fillColor;
+                this.context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.set(pixelKey, this.fillColor);
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
@@ -136,9 +146,23 @@ export default {
                 y: 1 + (eventY / this.zoom - rect.top) - ((eventY / this.zoom - rect.top) % this.cellSize),
             };
         },
+        loadBoard() {
+            getBoard().then((data) => {
+                for (const key in data) {
+                    const [x, y]  = key.split(',');
+                    this.confirmedPixels.set(key, data[key]);
+                    this.context.fillStyle = data[key];
+                    this.context.fillRect(x, y,this.cellSize - 1, this.cellSize - 1);
+                }
+            }).catch((err) => {
+                console.error(err);
+            })
+
+        }
     },
     mounted() {
         this.drawGrid('#acacac');
+        this.loadBoard();
         this.listenForUserEvents();
         this.listenForControlPanel();
     },

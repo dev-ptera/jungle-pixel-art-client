@@ -1,6 +1,5 @@
 <template>
-    <div id="control-panel"
-         v-bind:class="{ isTouchDevice: isTouchDevice }">
+    <div id="control-panel" v-bind:class="{ isTouchDevice: isTouchDevice }">
         <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
         <button
@@ -10,10 +9,14 @@
         >
             <img src="../assets/eraser.svg" height="24" />
         </button>
-        <button id="scrollLockButton" style="position: relative" class="material-icons material-icons-outlined"
-                v-if:="isTouchDevice"
-                v-bind:class="{ screenLock: screenLock }"
-                v-on:click="toggleScreenLock">
+        <button
+            id="scrollLockButton"
+            style="position: relative"
+            class="material-icons material-icons-outlined"
+            v-if:="isTouchDevice"
+            v-bind:class="{ screenLock: screenLock }"
+            v-on:click="toggleScreenLock"
+        >
             brush
         </button>
         <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
@@ -195,7 +198,8 @@ export default {
     width: 300px;
     z-index: 3;
 }
-::v-deep .vacp-copy-button, ::v-deep .vacp-color-input-group {
+::v-deep .vacp-copy-button,
+::v-deep .vacp-color-input-group {
     display: none;
 }
 #overlay {

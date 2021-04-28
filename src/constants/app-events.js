@@ -10,3 +10,4 @@ export const CHECKOUT = 'checkout';
 export const CHECKOUT_PIXELS = 'checkoutPixels';
 export const PAYMENT_ADDRESS = 'paymentAddress';
 export const CHECKOUT_ERROR = 'checkoutError';
+export const PAYMENT_SUCCESS = 'paymentSuccess';
