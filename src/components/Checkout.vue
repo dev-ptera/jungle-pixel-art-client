@@ -11,7 +11,7 @@
                 </button>
             </header>
 
-            <section class="modal-body">
+            <section v-if="!error" class="modal-body">
                 <canvas v-if="paymentAddress" id="qr-code"></canvas>
                 <div v-if="!paymentAddress" id="loading-state">
                     <div class="loader"></div>
@@ -20,9 +20,15 @@
                     Loading payment address
                 </div>
                 <div v-if="paymentAddress" class="instructions">
-                    To share your work of art with the world, send <strong>{{ this.pixels.size }}</strong> bananos to:
+                    To share your work of art with the world, send <strong>{{ this.size }}</strong> bananos to:
                 </div>
                 <div class="payment-address">{{ this.paymentAddress }}</div>
+            </section>
+
+
+            <section v-if="error" class="modal-body">
+                <div style="font-size: 64px; margin-top: 64px">Error</div>
+                <div v-if="error" class="instructions">{{this.error}}</div>
             </section>
 
             <div style="display: flex; flex: 1 1 0"></div>
@@ -44,33 +50,40 @@ export default {
     name: 'Checkout',
     methods: {
         close() {
+            this.pixels = undefined;
+            this.paymentAddress = undefined;
             this.$emit('close');
         },
         openKalium() {
-            return `ban:${this.paymentAddress}?amount=${this.pixels.size}`;
+            return `ban:${this.paymentAddress}?amount=TODO`;
         },
     },
     data() {
         return {
             pixels: new Map(),
+            error: undefined,
             paymentAddress: undefined,
         };
     },
     mounted() {
-        this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
-            getPaymentAddress(pixels.size).then((address) => {
-                this.pixels = pixels;
-                this.paymentAddress = address;
-                setTimeout(() => {
-                    const QRCode = require('qrcode');
-                    const canvas = document.getElementById('qr-code');
-                    QRCode.toCanvas(canvas, this.paymentAddress, function (error) {
-                        if (error) console.error(error);
-                    });
-                })
-            }).catch((err) => {
-                console.error(err);
+        this.emitter.on(UserEvents.PAYMENT_ADDRESS, (address) => {
+            this.paymentAddress = address;
+            setTimeout(() => {
+                const QRCode = require('qrcode');
+                const canvas = document.getElementById('qr-code');
+                QRCode.toCanvas(canvas, this.paymentAddress, function (error) {
+                    if (error) console.error(error);
+                });
             })
+        });
+        this.emitter.on(UserEvents.CHECKOUT_ERROR, (error) => {
+
+            this.error = error;
+        })
+        this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
+            this.pixels = pixels;
+            this.size = pixels.size;
+            getPaymentAddress(pixels);
         });
     },
 };

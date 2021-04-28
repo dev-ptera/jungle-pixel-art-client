@@ -8,3 +8,5 @@ export const PIXEL_COUNT = 'pixelCount';
 export const CHECKOUT = 'checkout';
 // Sends pixels user might purchase.
 export const CHECKOUT_PIXELS = 'checkoutPixels';
+export const PAYMENT_ADDRESS = 'paymentAddress';
+export const CHECKOUT_ERROR = 'checkoutError';
