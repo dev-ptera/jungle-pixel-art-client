@@ -12,8 +12,14 @@
             </header>
 
             <section class="modal-body">
-                <canvas id="qr-code"></canvas>
-                <div class="instructions">
+                <canvas v-if="paymentAddress" id="qr-code"></canvas>
+                <div v-if="!paymentAddress" id="loading-state">
+                    <div class="loader"></div>
+                </div>
+                <div v-if="!paymentAddress" class="instructions">
+                    Loading payment address
+                </div>
+                <div v-if="paymentAddress" class="instructions">
                     To share your work of art with the world, send <strong>{{ this.pixels.size }}</strong> bananos to:
                 </div>
                 <div class="payment-address">{{ this.paymentAddress }}</div>
@@ -22,8 +28,8 @@
             <div style="display: flex; flex: 1 1 0"></div>
 
             <footer class="modal-footer">
-                <a href="banano:ban_1ra4zw8f31soe4caz31cnq99nodbr65ke8yqoqhy8mf65ywakikri19ndj1m" style="width: 100%">
-                    <button type="button" class="pay-button" v-on:click="openKalium()">Pay in Kalium</button>
+                <a v-bind:href="openKalium()" style="width: 100%">
+                    <button type="button" class="pay-button" :disabled="!paymentAddress">Pay in Kalium</button>
                 </a>
             </footer>
         </div>
@@ -32,6 +38,7 @@
 
 <script>
 import * as UserEvents from '../constants/app-events';
+import { getPaymentAddress } from "../api";
 
 export default {
     name: 'Checkout',
@@ -40,23 +47,30 @@ export default {
             this.$emit('close');
         },
         openKalium() {
-            window.location = 'banano:ban_1ra4zw8f31soe4caz31cnq99nodbr65ke8yqoqhy8mf65ywakikri19ndj1m';
+            return `ban:${this.paymentAddress}?amount=${this.pixels.size}`;
         },
     },
     data() {
         return {
             pixels: new Map(),
-            paymentAddress: 'ban_1ra4zw8f31soe4caz31cnq99nodbr65ke8yqoqhy8mf65ywakikri19ndj1m',
+            paymentAddress: undefined,
         };
     },
     mounted() {
         this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
-            this.pixels = pixels;
-            const QRCode = require('qrcode');
-            const canvas = document.getElementById('qr-code');
-            QRCode.toCanvas(canvas, this.paymentAddress, function (error) {
-                if (error) console.error(error);
-            });
+            getPaymentAddress(pixels.size).then((address) => {
+                this.pixels = pixels;
+                this.paymentAddress = address;
+                setTimeout(() => {
+                    const QRCode = require('qrcode');
+                    const canvas = document.getElementById('qr-code');
+                    QRCode.toCanvas(canvas, this.paymentAddress, function (error) {
+                        if (error) console.error(error);
+                    });
+                })
+            }).catch((err) => {
+                console.error(err);
+            })
         });
     },
 };
@@ -155,5 +169,29 @@ export default {
     font-weight: 600;
     letter-spacing: 0.5px;
     width: 100%;
+}
+.pay-button[disabled] {
+    opacity: .5;
+}
+
+#loading-state {
+    display: flex;
+    margin-top: 80px;
+    margin-bottom: 24px;
+    justify-content: center;
+    align-items: center;
+}
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #438d43;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>

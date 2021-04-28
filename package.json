@@ -5,11 +5,12 @@
   "scripts": {
     "start": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
     "prettier": "prettier \"src/**/**.{ts,js,json,css,scss,html,vue}\" --write"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "mitt": "^2.1.0",
     "qrcode": "^1.4.4",

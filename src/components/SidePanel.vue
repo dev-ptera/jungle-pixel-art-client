@@ -130,9 +130,8 @@ export default {
             }
             evt.preventDefault();
         },
-        closeCheckout(evt) {
+        closeCheckout() {
             this.showCheckout = false;
-            evt.preventDefault();
         },
     },
     mounted() {
