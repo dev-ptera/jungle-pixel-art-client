@@ -1,4 +1,5 @@
 <template>
+    <div class="banana-backdrop" v-if="showWelcome"></div>
     <div class="modal-backdrop" v-if="showWelcome">
         <div class="modal">
             <div class="modal-background"></div>
@@ -8,13 +9,13 @@
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
-                This is the welcome screen, the pixels are loading in the background. By the time you dismiss this,
-                the board will have loaded.
+                This is the welcome screen, the pixels are loading in the background. By the time you dismiss this, the
+                board will have loaded.
             </section>
-            <div style="display: flex; flex: 1 1 0;"></div>
+            <div style="display: flex; flex: 1 1 0"></div>
             <div class="footer-wave"></div>
             <footer class="modal-footer">
-                <button type="button" class="art-button" @click="showWelcome = false">DO THE ART</button>
+                <button type="button" class="art-button" @click="showWelcome = false">DRAW SOME ART</button>
             </footer>
         </div>
     </div>
@@ -38,17 +39,28 @@ export default {
 </script>
 
 <style scoped>
-.modal-backdrop {
-    position: fixed;
+.banana-backdrop {
+    background: url('../assets/pixel-banan.png');
+    background-size: 100px;
+    height: 100vh;
+    width: 100vw;
     top: 0;
-    bottom: 0;
     left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.3);
+}
+.modal-backdrop,
+.banana-backdrop {
+    position: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 999;
+}
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .modal {
@@ -97,13 +109,14 @@ export default {
     letter-spacing: 3px;
 }
 
-.header-wave, .footer-wave {
-    background: url("../assets/wave-2.svg") no-repeat;
+.header-wave,
+.footer-wave {
+    background: url('../assets/wave-2.svg') no-repeat;
     z-index: 999;
     width: 100%;
     width: 100%;
     height: 3rem;
-    bottom: -.3rem;
+    bottom: -0.3rem;
     position: absolute;
     background-size: cover;
     background-position: 0 0;
@@ -150,5 +163,4 @@ export default {
     border: solid 1px #dcdcd0;
     letter-spacing: 2px;
 }
-
 </style>

@@ -12,7 +12,7 @@
 <script>
 import * as UserEvents from '../constants/app-events';
 import * as Defaults from '../constants/app-defaults';
-import {getBoard} from "../api";
+import { getBoard } from '../api';
 
 export default {
     name: 'Canvas',
@@ -115,7 +115,7 @@ export default {
             this.context.stroke();
         },
         fillSquare(x, y) {
-            const pixelKey = this.makeKey(x,y);
+            const pixelKey = this.makeKey(x, y);
             /* Uneditable pixel */
             if (this.confirmedPixels.has(pixelKey)) {
                 return;
@@ -127,9 +127,8 @@ export default {
                 }
                 this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.delete(pixelKey);
-            }
+            } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
             /* New/edit pixel */
-            else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
                 if (this.pixels.get(pixelKey)) {
                     this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 }
@@ -147,18 +146,19 @@ export default {
             };
         },
         loadBoard() {
-            getBoard().then((data) => {
-                for (const key in data) {
-                    const [x, y]  = key.split(',');
-                    this.confirmedPixels.set(key, data[key]);
-                    this.context.fillStyle = data[key];
-                    this.context.fillRect(x, y,this.cellSize - 1, this.cellSize - 1);
-                }
-            }).catch((err) => {
-                console.error(err);
-            })
-
-        }
+            getBoard()
+                .then((data) => {
+                    for (const key in data) {
+                        const [x, y] = key.split(',');
+                        this.confirmedPixels.set(key, data[key]);
+                        this.context.fillStyle = data[key];
+                        this.context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        },
     },
     mounted() {
         this.drawGrid('#acacac');

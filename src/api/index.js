@@ -1,9 +1,8 @@
 import * as UserEvents from '../constants/app-events';
 import { emitter } from '../main';
-import axios from "axios";
+import axios from 'axios';
 
 const API_ROOT = process.env.VUE_APP_API;
-
 
 export const getBoard = () =>
     axios
@@ -32,13 +31,17 @@ export const getPaymentAddress = (pixels) => {
         socket.send(JSON.stringify(data));
     };
 
+    emitter.on(UserEvents.PAYMENT_WINDOW_CLOSED, () => {
+        socket.close();
+    });
+
     socket.onmessage = (msg) => {
         if (msg.data) {
             const data = JSON.parse(msg.data);
             if (data.address) {
                 emitter.emit(UserEvents.PAYMENT_ADDRESS, {
                     address: data.address,
-                    amount: data.raw
+                    amount: data.raw,
                 });
             } else if (data.success) {
                 emitter.emit(UserEvents.PAYMENT_SUCCESS);

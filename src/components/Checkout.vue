@@ -33,7 +33,6 @@
                 <div>SUCCESSS!!!!</div>
             </section>
 
-
             <div style="display: flex; flex: 1 1 0"></div>
 
             <footer class="modal-footer">
@@ -59,6 +58,7 @@ export default {
             this.rawAmount = undefined;
             this.paymentAddress = undefined;
             this.paymentSuccess = undefined;
+            this.emitter.emit(UserEvents.PAYMENT_WINDOW_CLOSED);
             this.$emit('close');
         },
         openKalium() {
@@ -72,7 +72,7 @@ export default {
             size: undefined,
             paymentSuccess: undefined,
             paymentAddress: undefined,
-            rawAmount: undefined
+            rawAmount: undefined,
         };
     },
     mounted() {
