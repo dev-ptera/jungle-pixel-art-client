@@ -45,7 +45,7 @@
     </div>
 
     <color-picker v-if="isColorOpen" :visible-formats="[]" color="#f80b" @color-change="updateColor" />
-    <div id="overlay" v-if="isColorOpen" v-on:click="closeColor"></div>
+    <div id="color-picker-backdrop" v-if="isColorOpen" v-on:click="closeColor"></div>
 
     <Checkout v-show="showCheckout" @close="closeCheckout" />
 </template>
@@ -202,7 +202,7 @@ export default {
 ::v-deep .vacp-color-input-group {
     display: none;
 }
-#overlay {
+#color-picker-backdrop {
     position: fixed; /* Sit on top of the page content */
     width: 100%; /* Full width (cover the whole page) */
     height: 100%; /* Full height (cover the whole page) */
