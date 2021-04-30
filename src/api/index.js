@@ -16,12 +16,6 @@ export const getBoard = () =>
         .catch((err) => Promise.reject(err.data));
 
 export const getPaymentAddress = (pixels) => {
-    // wss: protocol is equivalent of https:
-    // ws:  protocol is equivalent of http:
-    // You ALWAYS need to provide absolute address
-    // I mean, you can't just use relative path like /echo
-    //const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:')
-    //const echoSocketUrl = socketProtocol + '//' + API_ROOT + '/echo/'
     const socket = new WebSocket(`${WS_API_ROOT}/payment`);
 
     socket.onopen = () => {
@@ -45,7 +39,7 @@ export const getPaymentAddress = (pixels) => {
                     raw: data.raw,
                 });
             } else if (data.success) {
-                emitter.emit(UserEvents.PAYMENT_SUCCESS);
+                emitter.emit(UserEvents.PAYMENT_SUCCESS, data.board);
             } else {
                 emitter.emit(UserEvents.CHECKOUT_ERROR, data.error);
             }

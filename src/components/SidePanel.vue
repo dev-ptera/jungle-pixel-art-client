@@ -38,8 +38,11 @@
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
-        <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="openCheckout">
-            <div class="shopping-cart-badge" v-if="pixelCount">{{ pixelCount }}</div>
+        <button style="position: relative" class="material-icons material-icons-outlined" v-bind:class="{ emptyCart: pixelCount === 0 }"
+                v-on:click="openCheckout">
+            <div  v-if="pixelCount" class="shopping-cart-badge">
+                {{ pixelCount }}
+            </div>
             shopping_cart
         </button>
     </div>
@@ -221,6 +224,9 @@ export default {
     height: 8px;
     width: 8px;
     border: solid 1px white;
+}
+.emptyCart {
+    opacity: .3;
 }
 .shopping-cart-badge {
     position: absolute;
