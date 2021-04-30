@@ -53,11 +53,11 @@ export default {
                 this.emitter.emit(UserEvents.CHECKOUT_PIXELS, this.pixels);
             });
             this.emitter.on(UserEvents.PAYMENT_SUCCESS, (pixels) => {
-               this.pixels.clear();
-               this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
-               for (const key in pixels) {
-                   this.confirmedPixels.set(key, pixels.get(key));
-               }
+                this.pixels.clear();
+                this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
+                for (const key in pixels) {
+                    this.confirmedPixels.set(key, pixels.get(key));
+                }
             });
         },
         listenForUserEvents() {
