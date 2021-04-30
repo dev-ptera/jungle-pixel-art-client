@@ -32,7 +32,7 @@ export const getPaymentAddress = (pixels) => {
     };
 
     emitter.on(UserEvents.PAYMENT_WINDOW_CLOSED, () => {
-        socket.close();
+        socket.close(4580);
     });
 
     socket.onmessage = (msg) => {

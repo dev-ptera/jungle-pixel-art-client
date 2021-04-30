@@ -128,7 +128,7 @@ export default {
                 this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 this.pixels.delete(pixelKey);
             } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
-            /* New/edit pixel */
+                /* New/edit pixel */
                 if (this.pixels.get(pixelKey)) {
                     this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
                 }
