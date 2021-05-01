@@ -186,6 +186,9 @@ export default {
     background: #60c15f;
     color: #101010;
 }
+#control-panel * {
+    -webkit-user-select: none!important;
+}
 #control-panel:not(.isTouchDevice) button:hover,
 #control-panel #scrollLockButton:not(.screenLock) {
     background: #277125;

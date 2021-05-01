@@ -182,6 +182,7 @@ export default {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;
+    -webkit-user-select: none!important;
 }
 #myCanvas {
     background: white;
