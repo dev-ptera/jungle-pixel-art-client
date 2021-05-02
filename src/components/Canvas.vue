@@ -132,15 +132,15 @@ export default {
                 if (!this.pixels.get(pixelKey)) {
                     return;
                 }
-                this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                this.context.clearRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.delete(pixelKey);
             } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
                 /* New/edit pixel */
                 if (this.pixels.get(pixelKey)) {
-                    this.context.clearRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                    this.context.clearRect(x, y, this.cellSize, this.cellSize);
                 }
                 this.context.fillStyle = this.fillColor;
-                this.context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                this.context.fillRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.set(pixelKey, this.fillColor);
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
@@ -148,8 +148,8 @@ export default {
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();
             return {
-                x: 1 + (eventX / this.zoom - rect.left) - ((eventX / this.zoom - rect.left) % this.cellSize),
-                y: 1 + (eventY / this.zoom - rect.top) - ((eventY / this.zoom - rect.top) % this.cellSize),
+                x: (eventX / this.zoom - rect.left) - ((eventX / this.zoom - rect.left) % this.cellSize),
+                y: (eventY / this.zoom - rect.top) - ((eventY / this.zoom - rect.top) % this.cellSize),
             };
         },
         loadBoard() {
@@ -159,7 +159,8 @@ export default {
                         const [x, y] = key.split(',');
                         this.confirmedPixels.set(key, data[key]);
                         this.context.fillStyle = data[key];
-                        this.context.fillRect(x, y, this.cellSize - 1, this.cellSize - 1);
+                        console.log(data[key]);
+                        this.context.fillRect(x, y, this.cellSize, this.cellSize);
                     }
                 })
                 .catch((err) => {
@@ -168,7 +169,7 @@ export default {
         },
     },
     mounted() {
-        this.drawGrid('#acacac');
+        this.drawGrid('#c3c3c380');
         this.loadBoard();
         this.listenForUserEvents();
         this.listenForControlPanel();
