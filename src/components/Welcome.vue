@@ -4,8 +4,8 @@
         <div class="modal">
             <div class="modal-background"></div>
             <header class="modal-header">
-                <div class="line-1">welcome to the</div>
-                <div class="line-2">PIXELARTJUNGLE</div>
+                <div class="line-1">Welcome to</div>
+                <div class="line-2">JUNGLE PIXELART</div>
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
@@ -98,7 +98,7 @@ export default {
     margin-bottom: 8px;
     padding-top: 16px;
     text-align: left;
-    margin-left: 20px;
+    margin-left: 12px;
 }
 .modal-header .line-2 {
     z-index: 1;
