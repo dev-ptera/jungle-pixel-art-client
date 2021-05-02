@@ -148,8 +148,8 @@ export default {
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();
             return {
-                x: (eventX / this.zoom - rect.left) - ((eventX / this.zoom - rect.left) % this.cellSize),
-                y: (eventY / this.zoom - rect.top) - ((eventY / this.zoom - rect.top) % this.cellSize),
+                x: eventX / this.zoom - rect.left - ((eventX / this.zoom - rect.left) % this.cellSize),
+                y: eventY / this.zoom - rect.top - ((eventY / this.zoom - rect.top) % this.cellSize),
             };
         },
         loadBoard() {
@@ -183,7 +183,7 @@ export default {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;
-    -webkit-user-select: none!important;
+    -webkit-user-select: none !important;
 }
 #myCanvas {
     background: white;

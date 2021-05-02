@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build_client:
+    docker:
+      - image: circleci/node:12.9.1-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-vue-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            yarn install --frozen-lockfile
+      - save_cache:
+          name: Save Cache
+          paths:
+            - node_modules
+          key: v2-dependencies-vue-{{ checksum "yarn.lock" }}
+      - run:
+          name: Prettier Check
+          command: |
+            yarn prettier:check
+      - run:
+          name: Lint
+          command: |
+            yarn lint
+      - run:
+          name: Build
+          command: |
+            yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+
+  deploy_client:
+    docker:
+      - image: circleci/node:12.9.1-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-vue-{{ checksum "yarn.lock" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy Web App
+          command: |
+            yarn deploy:prod
+
+workflows:
+  version: 2
+  jungle-pixel-art:
+    jobs:
+      - build_client
+      - deploy_client:
+          requires:
+            - build_client
+          filters:
+            branches:
+              only:
+                - master

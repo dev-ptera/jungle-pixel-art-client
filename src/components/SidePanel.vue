@@ -187,7 +187,7 @@ export default {
     color: #101010;
 }
 #control-panel * {
-    -webkit-user-select: none!important;
+    -webkit-user-select: none !important;
 }
 #control-panel:not(.isTouchDevice) button:hover,
 #control-panel #scrollLockButton:not(.screenLock) {
