@@ -13,7 +13,7 @@
             style="position: relative"
             class="material-icons material-icons-outlined scroll-lock-button"
             v-if:="isTouchDevice"
-            v-bind:class="{ 'screen-lock': screenLock }"
+            v-bind:class="{ 'screen-lock': screenLock || eraser }"
             v-on:click="toggleScreenLock"
         >
             brush
@@ -35,7 +35,12 @@
             <button :style="{ background: black }" v-on:click="swatchColor(black)"></button>
             <button :style="{ background: gray }" v-on:click="swatchColor(gray)"></button>
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
-            <button v-for="customColor in customColors" :key="customColor" :style="{ background: customColor }" v-on:click="swatchColor(customColor)"></button>
+            <button
+                v-for="customColor in customColors"
+                :key="customColor"
+                :style="{ background: customColor }"
+                v-on:click="swatchColor(customColor)"
+            ></button>
             <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">add</button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
@@ -91,7 +96,7 @@ export default {
             costModifier: 1,
             zoom: Defaults.ZOOM,
             eraser: Defaults.ERASER,
-            screenLock: false,
+            screenLock: false /* Edits enabled */,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
             isTouchDevice: undefined,
@@ -110,11 +115,24 @@ export default {
         },
         toggleEraser(evt) {
             this.eraser = !this.eraser;
+            if (this.eraser) {
+                this.screenLock = false;
+            }
+            if (!this.eraser) {
+                this.screenLock = true;
+            }
             this.emitter.emit(UserEvents.ERASER, this.eraser);
+            this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
             evt.preventDefault();
         },
         toggleScreenLock(evt) {
-            this.screenLock = !this.screenLock;
+            if (this.eraser) {
+                this.screenLock = false;
+                this.eraser = false;
+            } else {
+                this.screenLock = !this.screenLock;
+            }
+            this.emitter.emit(UserEvents.ERASER, this.eraser);
             this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
             evt.preventDefault();
         },
@@ -129,8 +147,8 @@ export default {
             this.emitter.emit(UserEvents.ERASER, this.eraser);
         },
         addNewColor() {
-          this.saveColor = true;
-          this.isColorOpen = true;
+            this.saveColor = true;
+            this.isColorOpen = true;
         },
         showColor(evt) {
             this.isColorOpen = true;

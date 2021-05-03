@@ -273,5 +273,4 @@ export default {
     background: #277125 !important;
     cursor: pointer;
 }
-
 </style>

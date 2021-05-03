@@ -1,17 +1,23 @@
 <template>
-    <div class="banana-backdrop" v-if="showWelcome"></div>
     <div class="modal-backdrop" v-if="showWelcome">
         <div class="modal">
             <header class="modal-header">
                 <div class="line-1">JUNGLE PIXELART</div>
-                <div class="line-2">the community drawing board</div>
+                <div class="line-2">a community art gallery</div>
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
-                This is a pixel board for the banano community; have fun & get creative!
+                This is a pixel board for the banano community; draw a masterpiece and save it for all the world to see.
                 <br />
                 <br />
-                This board is in beta, any saved drawings will get erased when ready for the official release.  Price per pixel will be updated in the official release.
+                This board is in beta, any saved drawings will get erased when ready for the official release. Price per
+                pixel will be updated in the official release.
+
+                <br />
+                <br />
+                <div style="font-size: 11px">
+                    Any issue? Suggestions? Features? contact dev.ptera@gmail.com or reddit user dev-ptera
+                </div>
                 <!--Any banano profit will be donated to charity.  See the details <a href>here.</a>-->
             </section>
             <div style="display: flex; flex: 1 1 0"></div>
@@ -41,16 +47,7 @@ export default {
 </script>
 
 <style scoped>
-.banana-backdrop {
-    background: url('../assets/pixel-banan.png');
-    background-size: 100px;
-    height: 100vh;
-    width: 100vw;
-    top: 0;
-    left: 0;
-}
-.modal-backdrop,
-.banana-backdrop {
+.modal-backdrop {
     position: fixed;
     display: flex;
     justify-content: center;
@@ -137,7 +134,7 @@ export default {
     padding: 16px;
     text-align: center;
     height: 100%;
-    margin-top: 48px;
+    margin-top: 32px;
     font-size: 16px;
 }
 
