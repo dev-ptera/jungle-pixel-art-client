@@ -8,8 +8,14 @@
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
-                This is the welcome screen, the pixels are loading in the background. By the time you dismiss this, the
-                board will have loaded.
+                This is a pixel board for the banano community!
+                <br/>
+                <br/>
+                Have fun & get creative!
+                <br />
+                <br />
+                This board is in beta, any 'saved' drawings will get erased when ready for the official release.
+                <!--Any banano profit will be donated to charity.  See the details <a href>here.</a>-->
             </section>
             <div style="display: flex; flex: 1 1 0"></div>
             <div class="footer-wave"></div>
@@ -68,9 +74,9 @@ export default {
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    max-height: 450px;
+    max-height: 500px;
     height: 90vh;
-    width: 300px;
+    width: 320px;
     border-radius: 8px;
     z-index: 5;
     position: relative;
@@ -122,7 +128,7 @@ export default {
     top: 108px;
 }
 .footer-wave {
-    top: 335px;
+    top: 385px;
     -webkit-transform: scaleY(-1) scaleX(-1);
     transform: scaleY(-1) scaleX(-1);
 }

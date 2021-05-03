@@ -1,7 +1,7 @@
 <template>
     <div class="modal-backdrop">
         <div class="modal">
-            <header class="modal-header" v-if="!paymentSuccess">
+            <header class="modal-header" v-if="!paymentSuccess && !error">
                 <div>
                     <div class="line-1">Well done, Picasso!</div>
                     <div class="line-2">Save your work below.</div>
@@ -29,18 +29,19 @@
                     To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
                 </div>
                 <div class="payment-address">{{ paymentAddress }}</div>
+                <div class="timeout">This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds.</div>
             </section>
 
             <section v-if="error" class="modal-body">
-                <div style="font-size: 64px; margin-top: 64px">Error</div>
+                <div style="font-size: 64px">Error</div>
                 <div v-if="error" class="instructions">{{ error }}</div>
             </section>
 
             <footer class="modal-footer">
-                <a v-if="!paymentSuccess" v-bind:href="openKalium()" style="width: 100%">
+                <a v-if="!paymentSuccess && !error" v-bind:href="openKalium()" style="width: 100%">
                     <button type="button" class="footer-button" :disabled="!paymentAddress">Pay in Kalium</button>
                 </a>
-                <button v-if="paymentSuccess" @click="close" type="button" class="footer-button">Close</button>
+                <button v-if="paymentSuccess || error" @click="close" type="button" class="footer-button">Close</button>
             </footer>
         </div>
     </div>
@@ -60,6 +61,7 @@ export default {
             this.rawAmount = undefined;
             this.paymentAddress = undefined;
             this.paymentSuccess = undefined;
+            this.timeRemainingSeconds = undefined;
             this.emitter.emit(UserEvents.PAYMENT_WINDOW_CLOSED);
             this.$emit('close');
         },
@@ -75,6 +77,7 @@ export default {
             paymentSuccess: undefined,
             paymentAddress: undefined,
             rawAmount: undefined,
+            timeRemainingSeconds: undefined
         };
     },
     mounted() {
@@ -93,6 +96,13 @@ export default {
             this.paymentAddress = data.address;
             this.cost = data.cost;
             this.rawAmount = data.raw;
+            this.timeRemainingSeconds = Math.round((data.timeout - 1000) / 1000);
+            const timeoutInterval = setInterval(() => {
+                this.timeRemainingSeconds-=1;
+                if (this.timeRemainingSeconds <= 0) {
+                    clearInterval(timeoutInterval);
+                }
+            }, 1000);
             setTimeout(() => {
                 const QRCode = require('qrcode');
                 const canvas = document.getElementById('qr-code');
@@ -130,8 +140,8 @@ export default {
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 460px;
-    width: 300px;
+    height: 500px;
+    width: 320px;
     border-radius: 8px;
 }
 
@@ -161,6 +171,9 @@ export default {
     margin-top: 8px;
     word-break: break-all;
 }
+.timeout {
+    margin-top: 16px;
+}
 
 .x-button {
     position: absolute;
@@ -184,6 +197,7 @@ export default {
     padding: 16px;
     font-size: 14px;
     color: #2a2a2e;
+    text-align: center;
 }
 
 .empty-state-icon {

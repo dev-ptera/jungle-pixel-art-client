@@ -33,14 +33,17 @@ export const getPaymentAddress = (pixels) => {
         socket.close(4580);
     });
 
+    const reqStart = window.performance.now();
     socket.onmessage = (msg) => {
         if (msg.data) {
             const data = JSON.parse(msg.data);
             if (data.address) {
+                const reqEnd = window.performance.now();
                 emitter.emit(UserEvents.PAYMENT_ADDRESS, {
                     address: data.address,
                     raw: data.raw,
                     cost: data.cost,
+                    timeout: data.timeout - (reqEnd-reqStart)
                 });
             } else if (data.success) {
                 emitter.emit(UserEvents.PAYMENT_SUCCESS, data.board);
