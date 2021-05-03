@@ -9,8 +9,8 @@
             <div class="header-wave"></div>
             <section class="modal-body">
                 This is a pixel board for the banano community!
-                <br/>
-                <br/>
+                <br />
+                <br />
                 Have fun & get creative!
                 <br />
                 <br />

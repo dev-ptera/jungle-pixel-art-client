@@ -29,7 +29,9 @@
                     To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
                 </div>
                 <div class="payment-address">{{ paymentAddress }}</div>
-                <div class="timeout">This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds.</div>
+                <div class="timeout">
+                    This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds.
+                </div>
             </section>
 
             <section v-if="error" class="modal-body">
@@ -77,7 +79,7 @@ export default {
             paymentSuccess: undefined,
             paymentAddress: undefined,
             rawAmount: undefined,
-            timeRemainingSeconds: undefined
+            timeRemainingSeconds: undefined,
         };
     },
     mounted() {
@@ -98,7 +100,7 @@ export default {
             this.rawAmount = data.raw;
             this.timeRemainingSeconds = Math.round((data.timeout - 1000) / 1000);
             const timeoutInterval = setInterval(() => {
-                this.timeRemainingSeconds-=1;
+                this.timeRemainingSeconds -= 1;
                 if (this.timeRemainingSeconds <= 0) {
                     clearInterval(timeoutInterval);
                 }

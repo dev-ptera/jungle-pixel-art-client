@@ -43,7 +43,7 @@ export const getPaymentAddress = (pixels) => {
                     address: data.address,
                     raw: data.raw,
                     cost: data.cost,
-                    timeout: data.timeout - (reqEnd-reqStart)
+                    timeout: data.timeout - (reqEnd - reqStart),
                 });
             } else if (data.success) {
                 emitter.emit(UserEvents.PAYMENT_SUCCESS, data.board);
