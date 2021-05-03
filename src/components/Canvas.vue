@@ -1,5 +1,5 @@
 <template>
-    <div id="canvas-container">
+    <div class="canvas-container">
         <canvas
             id="myCanvas"
             oncontextmenu="return false;"
@@ -178,7 +178,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#canvas-container {
+.canvas-container {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;

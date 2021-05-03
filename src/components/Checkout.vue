@@ -11,31 +11,29 @@
                 </button>
             </header>
 
-            <section v-if="!paymentSuccess" class="pending-body">
-                <section v-if="!error" class="modal-body">
-                    <canvas v-if="paymentAddress" id="qr-code"></canvas>
-                    <div v-if="!paymentAddress" class="loading-state">
-                        <div class="loader"></div>
-                    </div>
-                    <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
-                    <div v-if="paymentAddress" class="instructions">
-                        To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
-                    </div>
-                    <div class="payment-address">{{ paymentAddress }}</div>
-                </section>
-
-                <section v-if="error" class="modal-body">
-                    <div style="font-size: 64px; margin-top: 64px">Error</div>
-                    <div v-if="error" class="instructions">{{ error }}</div>
-                </section>
-            </section>
-
-            <section v-if="paymentSuccess" class="success-body">
+            <section v-if="paymentSuccess" class="modal-body">
                 <div class="material-icons material-icons-outlined empty-state-icon">check_circle</div>
                 <div class="empty-state-title">Success</div>
                 <div class="empty-state-description">
                     Your work of art has been saved & added to the collection. You can now close this window.
                 </div>
+            </section>
+
+            <section v-if="!paymentSuccess && !error" class="modal-body">
+                <canvas v-if="paymentAddress" id="qr-code"></canvas>
+                <div v-if="!paymentAddress" class="loading-state">
+                    <div class="loader"></div>
+                </div>
+                <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
+                <div v-if="paymentAddress" class="instructions">
+                    To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
+                </div>
+                <div class="payment-address">{{ paymentAddress }}</div>
+            </section>
+
+            <section v-if="error" class="modal-body">
+                <div style="font-size: 64px; margin-top: 64px">Error</div>
+                <div v-if="error" class="instructions">{{ error }}</div>
             </section>
 
             <footer class="modal-footer">
@@ -158,14 +156,6 @@ export default {
     justify-content: space-between;
 }
 
-.modal-body {
-    color: #2a2a2e;
-    position: relative;
-    font-size: 14px;
-    padding-top: 0;
-    text-align: center;
-}
-
 .payment-address {
     font-weight: 600;
     margin-top: 8px;
@@ -185,15 +175,17 @@ export default {
     background: transparent;
 }
 
-.success-body,
-.pending-body {
+.modal-body {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 16px;
+    font-size: 14px;
+    color: #2a2a2e;
 }
+
 .empty-state-icon {
     color: #438d43;
     font-size: 96px;
@@ -211,7 +203,6 @@ export default {
 
 .loading-state {
     display: flex;
-    margin-top: 80px;
     margin-bottom: 24px;
     justify-content: center;
     align-items: center;

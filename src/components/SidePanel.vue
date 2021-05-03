@@ -1,5 +1,5 @@
 <template>
-    <div id="control-panel" v-bind:class="{ isTouchDevice: isTouchDevice }">
+    <div class="control-panel" v-bind:class="{ isTouchDevice: isTouchDevice }">
         <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
         <button
@@ -10,11 +10,10 @@
             <img src="../assets/eraser.svg" height="24" />
         </button>
         <button
-            id="scrollLockButton"
             style="position: relative"
-            class="material-icons material-icons-outlined"
+            class="material-icons material-icons-outlined scroll-lock-button"
             v-if:="isTouchDevice"
-            v-bind:class="{ screenLock: screenLock }"
+            v-bind:class="{ 'screen-lock': screenLock }"
             v-on:click="toggleScreenLock"
         >
             brush
@@ -52,7 +51,7 @@
     </div>
 
     <color-picker v-if="isColorOpen" :visible-formats="[]" color="#f80b" @color-change="updateColor" />
-    <div id="color-picker-backdrop" v-if="isColorOpen" v-on:click="closeColor"></div>
+    <div class="color-picker-backdrop" v-if="isColorOpen" v-on:click="closeColor"></div>
 
     <Checkout v-show="showCheckout" @close="closeCheckout" />
 </template>
@@ -166,7 +165,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#control-panel {
+.control-panel {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -179,7 +178,7 @@ export default {
     border-right: solid 1px darkslategray;
     border-left: solid 1px darkslategray;
 }
-#control-panel button {
+.control-panel button {
     width: 100%;
     text-align: center;
     height: 56px;
@@ -190,18 +189,18 @@ export default {
     background: #60c15f;
     color: #101010;
 }
-#control-panel * {
+.control-panel * {
     -webkit-user-select: none !important;
 }
-#control-panel:not(.isTouchDevice) button:hover,
-#control-panel #scrollLockButton:not(.screenLock) {
+.control-panel:not(.isTouchDevice) button:hover,
+.control-panel .scroll-lock-button:not(.screen-lock) {
     background: #277125;
     cursor: pointer;
 }
-#control-panel #scrollLockButton.screenLock {
+.control-panel .scroll-lock-button.screen-lock {
     background: #60c15f;
 }
-#control-panel .swatches button {
+.control-panel .swatches button {
     width: 28px;
     height: 28px;
 }
@@ -216,7 +215,7 @@ export default {
 ::v-deep .vacp-color-input-group {
     display: none;
 }
-#color-picker-backdrop {
+.color-picker-backdrop {
     position: fixed; /* Sit on top of the page content */
     width: 100%; /* Full width (cover the whole page) */
     height: 100%; /* Full height (cover the whole page) */
