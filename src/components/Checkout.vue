@@ -1,12 +1,12 @@
 <template>
     <div class="modal-backdrop">
         <div class="modal">
-            <header class="modal-header">
+            <header class="modal-header" v-if="!paymentSuccess">
                 <div>
                     <div class="line-1">Well done, Picasso!</div>
                     <div class="line-2">Save your work below.</div>
                 </div>
-                <button type="button" class="btn-close material-icons material-icons-outlined" @click="close">
+                <button type="button" class="x-button material-icons material-icons-outlined" @click="close">
                     close
                 </button>
             </header>
@@ -14,12 +14,12 @@
             <section v-if="!paymentSuccess">
                 <section v-if="!error" class="modal-body">
                     <canvas v-if="paymentAddress" id="qr-code"></canvas>
-                    <div v-if="!paymentAddress" id="loading-state">
+                    <div v-if="!paymentAddress" class="loading-state">
                         <div class="loader"></div>
                     </div>
                     <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
                     <div v-if="paymentAddress" class="instructions">
-                        To share your work of art with the world, send <strong>{{ size }}</strong> bananos to:
+                        To share your work of art with the world, send <strong>{{ size }}</strong> banano to:
                     </div>
                     <div class="payment-address">{{ paymentAddress }}</div>
                 </section>
@@ -29,16 +29,24 @@
                     <div v-if="error" class="instructions">{{ error }}</div>
                 </section>
             </section>
-            <section v-if="paymentSuccess">
-                <div>SUCCESSS!!!!</div>
+            <div v-if="!paymentSuccess" style="display: flex; flex: 1 1 0"></div>
+
+            <section v-if="paymentSuccess" class="success-body">
+                <div
+                    class="material-icons material-icons-outlined empty-state-icon"
+                >
+                    check_circle
+                </div>
+                <div class="empty-state-title">Success</div>
+                <div class="empty-state-description">Your work of art has been saved & added to the collection. You can now close this window.</div>
             </section>
 
-            <div style="display: flex; flex: 1 1 0"></div>
 
             <footer class="modal-footer">
-                <a v-bind:href="openKalium()" style="width: 100%">
-                    <button type="button" class="pay-button" :disabled="!paymentAddress">Pay in Kalium</button>
+                <a v-if="!paymentSuccess" v-bind:href="openKalium()" style="width: 100%">
+                    <button type="button" class="footer-button" :disabled="!paymentAddress">Pay in Kalium</button>
                 </a>
+                <button v-if="paymentSuccess" @click="close" type="button" class="footer-button">Close</button>
             </footer>
         </div>
     </div>
@@ -76,17 +84,6 @@ export default {
         };
     },
     mounted() {
-        this.emitter.on(UserEvents.PAYMENT_ADDRESS, (data) => {
-            this.paymentAddress = data.address;
-            this.rawAmount = data.raw;
-            setTimeout(() => {
-                const QRCode = require('qrcode');
-                const canvas = document.getElementById('qr-code');
-                QRCode.toCanvas(canvas, this.openKalium(), function (error) {
-                    if (error) console.error(error);
-                });
-            });
-        });
         this.emitter.on(UserEvents.CHECKOUT_ERROR, (error) => {
             this.error = error;
         });
@@ -98,6 +95,17 @@ export default {
             this.size = pixels.size;
             getPaymentAddress(pixels);
         });
+        this.emitter.on(UserEvents.PAYMENT_ADDRESS, (data) => {
+            this.paymentAddress = data.address;
+            this.rawAmount = data.raw;
+            setTimeout(() => {
+                const QRCode = require('qrcode');
+                const canvas = document.getElementById('qr-code');
+                QRCode.toCanvas(canvas, this.openKalium(), function (error) {
+                    if (error) console.error(error);
+                });
+            });
+        });
     },
 };
 </script>
@@ -108,6 +116,7 @@ export default {
     width: 180px !important;
     margin-bottom: 4px;
 }
+
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -152,12 +161,6 @@ export default {
     justify-content: space-between;
 }
 
-.modal-footer {
-    border-top: 1px solid #eeeeee;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
 .modal-body {
     color: #2a2a2e;
     position: relative;
@@ -173,7 +176,7 @@ export default {
     word-break: break-all;
 }
 
-.btn-close {
+.x-button {
     position: absolute;
     top: 0;
     right: 0;
@@ -186,27 +189,37 @@ export default {
     background: transparent;
 }
 
-.pay-button {
-    color: white;
-    background: #438d43;
-    border: 1px solid #438d43;
-    border-radius: 4px;
-    height: 36px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    width: 100%;
+.success-body {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
 }
-.pay-button[disabled] {
-    opacity: 0.5;
+.empty-state-icon {
+    color:#438d43;
+    font-size: 96px;
+    line-height: 96px;
+}
+.empty-state-title {
+    font-size: 36px;
+    color: #2a2a2e;
+}
+.empty-state-description {
+    font-size: 14px;
+    text-align: center;
+    color: #444449;
 }
 
-#loading-state {
+.loading-state {
     display: flex;
     margin-top: 80px;
     margin-bottom: 24px;
     justify-content: center;
     align-items: center;
 }
+
 .loader {
     border: 8px solid #f3f3f3;
     border-top: 8px solid #438d43;
@@ -224,4 +237,30 @@ export default {
         transform: rotate(360deg);
     }
 }
+
+.modal-footer {
+    border-top: 1px solid #eeeeee;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.footer-button:hover {
+    background: #277125!important;
+    cursor: pointer;
+}
+
+.footer-button {
+    color: white;
+    background: #438d43;
+    border: 1px solid #438d43;
+    border-radius: 4px;
+    height: 36px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+.footer-button[disabled] {
+    opacity: 0.5;
+}
+
 </style>
