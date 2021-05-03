@@ -11,7 +11,7 @@
                 </button>
             </header>
 
-            <section v-if="!paymentSuccess">
+            <section v-if="!paymentSuccess" class="pending-body">
                 <section v-if="!error" class="modal-body">
                     <canvas v-if="paymentAddress" id="qr-code"></canvas>
                     <div v-if="!paymentAddress" class="loading-state">
@@ -19,7 +19,7 @@
                     </div>
                     <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
                     <div v-if="paymentAddress" class="instructions">
-                        To share your work of art with the world, send <strong>{{ size }}</strong> banano to:
+                        To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
                     </div>
                     <div class="payment-address">{{ paymentAddress }}</div>
                 </section>
@@ -29,7 +29,6 @@
                     <div v-if="error" class="instructions">{{ error }}</div>
                 </section>
             </section>
-            <div v-if="!paymentSuccess" style="display: flex; flex: 1 1 0"></div>
 
             <section v-if="paymentSuccess" class="success-body">
                 <div
@@ -61,7 +60,7 @@ export default {
     methods: {
         close() {
             this.pixels = undefined;
-            this.size = undefined;
+            this.cost = undefined;
             this.error = undefined;
             this.rawAmount = undefined;
             this.paymentAddress = undefined;
@@ -77,7 +76,7 @@ export default {
         return {
             pixels: new Map(),
             error: undefined,
-            size: undefined,
+            cost: undefined,
             paymentSuccess: undefined,
             paymentAddress: undefined,
             rawAmount: undefined,
@@ -92,11 +91,12 @@ export default {
         });
         this.emitter.on(UserEvents.CHECKOUT_PIXELS, (pixels) => {
             this.pixels = pixels;
-            this.size = pixels.size;
             getPaymentAddress(pixels);
         });
         this.emitter.on(UserEvents.PAYMENT_ADDRESS, (data) => {
+            console.log(data);
             this.paymentAddress = data.address;
+            this.cost = data.cost;
             this.rawAmount = data.raw;
             setTimeout(() => {
                 const QRCode = require('qrcode');
@@ -135,7 +135,7 @@ export default {
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 450px;
+    height: 460px;
     width: 300px;
     border-radius: 8px;
 }
@@ -165,7 +165,6 @@ export default {
     color: #2a2a2e;
     position: relative;
     font-size: 14px;
-    padding: 16px;
     padding-top: 0;
     text-align: center;
 }
@@ -189,7 +188,7 @@ export default {
     background: transparent;
 }
 
-.success-body {
+.success-body, .pending-body {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;

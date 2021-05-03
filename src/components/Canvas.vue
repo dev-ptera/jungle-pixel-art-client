@@ -155,11 +155,10 @@ export default {
         loadBoard() {
             getBoard()
                 .then((data) => {
-                    for (const key in data) {
+                    for (const key in data.pixels) {
                         const [x, y] = key.split(',');
                         this.confirmedPixels.set(key, data[key]);
-                        this.context.fillStyle = data[key];
-                        console.log(data[key]);
+                        this.context.fillStyle = data.pixels[key];
                         this.context.fillRect(x, y, this.cellSize, this.cellSize);
                     }
                 })

@@ -12,3 +12,4 @@ export const PAYMENT_ADDRESS = 'paymentAddress';
 export const CHECKOUT_ERROR = 'checkoutError';
 export const PAYMENT_SUCCESS = 'paymentSuccess';
 export const PAYMENT_WINDOW_CLOSED = 'paymentClosed';
+export const COST_PER_PIXEL_LOADED = 'costPerPixelLoaded';

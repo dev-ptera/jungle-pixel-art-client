@@ -41,11 +41,11 @@
         <button
             style="position: relative"
             class="material-icons material-icons-outlined"
-            v-bind:class="{ emptyCart: pixelCount === 0 }"
+            v-bind:class="{ emptyCart: cost === 0 }"
             v-on:click="openCheckout"
         >
-            <div v-if="pixelCount" class="shopping-cart-badge">
-                {{ pixelCount }}
+            <div v-if="cost" class="shopping-cart-badge">
+                {{ cost }}
             </div>
             shopping_cart
         </button>
@@ -72,7 +72,6 @@ export default {
     },
     data() {
         return {
-            pixelCount: 0,
             red: '#bf0303',
             orange: '#f8be12',
             yellow: '#f6f110',
@@ -86,6 +85,8 @@ export default {
             gray: '#8b8b8b',
             white: '#ffffff',
             color: '#bf0303',
+            cost: 0,
+            costModifier: 1,
             zoom: Defaults.ZOOM,
             eraser: Defaults.ERASER,
             screenLock: false,
@@ -134,7 +135,7 @@ export default {
             evt.preventDefault();
         },
         openCheckout(evt) {
-            if (this.pixelCount > 0) {
+            if (this.cost > 0) {
                 this.showCheckout = true;
                 this.emitter.emit(UserEvents.CHECKOUT);
             }
@@ -146,8 +147,11 @@ export default {
     },
     mounted() {
         this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+        this.emitter.on(UserEvents.COST_PER_PIXEL_LOADED, (costModifier) => {
+            this.costModifier = costModifier;
+        })
         this.emitter.on(UserEvents.PIXEL_COUNT, (pixelCount) => {
-            this.pixelCount = pixelCount;
+            this.cost = Math.ceil(this.costModifier * pixelCount);
         });
         /* Enable screen lock for touch devices on load. */
         if (this.isTouchDevice) {

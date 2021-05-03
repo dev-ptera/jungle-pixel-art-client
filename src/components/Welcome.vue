@@ -2,10 +2,9 @@
     <div class="banana-backdrop" v-if="showWelcome"></div>
     <div class="modal-backdrop" v-if="showWelcome">
         <div class="modal">
-            <div class="modal-background"></div>
             <header class="modal-header">
-                <div class="line-1">Welcome to</div>
-                <div class="line-2">JUNGLE PIXELART</div>
+                <div class="line-1">JUNGLE PIXELART</div>
+                <div class="line-2">the community drawing board</div>
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
@@ -90,23 +89,21 @@ export default {
     justify-content: space-between;
     display: flex;
     flex-direction: column;
+    text-align: center;
 }
 .modal-header .line-1 {
     z-index: 1;
-    font-size: 16px;
-    font-weight: 200;
-    margin-bottom: 8px;
+    font-size: 24px;
     padding-top: 16px;
-    text-align: left;
-    margin-left: 12px;
+    letter-spacing: 3px;
 }
 .modal-header .line-2 {
     z-index: 1;
-    text-align: center;
-    font-size: 24px;
+    font-size: 16px;
     line-height: 16px;
-    height: 36px;
-    letter-spacing: 3px;
+    font-weight: 200;
+    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
 .header-wave,
@@ -139,9 +136,6 @@ export default {
     height: 100%;
     margin-top: 48px;
     font-size: 16px;
-}
-
-.modal-background {
 }
 
 .modal-footer {
