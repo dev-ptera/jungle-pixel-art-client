@@ -24,19 +24,20 @@
                 <div v-if="!paymentAddress" class="loading-state">
                     <div class="loader"></div>
                 </div>
-                <div v-if="!paymentAddress" class="instructions">Loading payment address</div>
-                <div v-if="paymentAddress" class="instructions">
+                <div v-if="!paymentAddress">Loading payment address</div>
+                <div v-if="paymentAddress">
                     To share your work of art with the world, send <strong>{{ cost }}</strong> banano to:
                 </div>
                 <div class="payment-address">{{ paymentAddress }}</div>
-                <div class="timeout">
+                <div v-if="paymentAddress" class="timeout">
                     This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds.
                 </div>
             </section>
 
             <section v-if="error" class="modal-body">
-                <div style="font-size: 64px">Error</div>
-                <div v-if="error" class="instructions">{{ error }}</div>
+                <div class="material-icons material-icons-outlined empty-state-icon error-icon">error</div>
+                <div style="font-size: 48px">Error</div>
+                <div v-if="error" class="error-message">{{ error }}</div>
             </section>
 
             <footer class="modal-footer">
@@ -206,6 +207,10 @@ export default {
     color: #438d43;
     font-size: 96px;
     line-height: 96px;
+    margin-bottom: 24px;
+}
+.error-icon {
+    color: #cb3232;
 }
 .empty-state-title {
     font-size: 36px;
@@ -214,6 +219,9 @@ export default {
 .empty-state-description {
     font-size: 14px;
     text-align: center;
+    color: #444449;
+}
+.error-message {
     color: #444449;
 }
 
@@ -248,11 +256,6 @@ export default {
     justify-content: flex-end;
 }
 
-.footer-button:hover {
-    background: #277125 !important;
-    cursor: pointer;
-}
-
 .footer-button {
     color: white;
     background: #438d43;
@@ -266,4 +269,9 @@ export default {
 .footer-button[disabled] {
     opacity: 0.5;
 }
+.footer-button:not[disabled]:hover {
+    background: #277125 !important;
+    cursor: pointer;
+}
+
 </style>

@@ -8,13 +8,10 @@
             </header>
             <div class="header-wave"></div>
             <section class="modal-body">
-                This is a pixel board for the banano community!
+                This is a pixel board for the banano community; have fun & get creative!
                 <br />
                 <br />
-                Have fun & get creative!
-                <br />
-                <br />
-                This board is in beta, any 'saved' drawings will get erased when ready for the official release.
+                This board is in beta, any saved drawings will get erased when ready for the official release.  Price per pixel will be updated in the official release.
                 <!--Any banano profit will be donated to charity.  See the details <a href>here.</a>-->
             </section>
             <div style="display: flex; flex: 1 1 0"></div>
@@ -162,5 +159,9 @@ export default {
     width: 100%;
     border: solid 1px #dcdcd0;
     letter-spacing: 2px;
+}
+.art-button:hover {
+    background: #277125 !important;
+    cursor: pointer;
 }
 </style>

@@ -35,6 +35,8 @@
             <button :style="{ background: black }" v-on:click="swatchColor(black)"></button>
             <button :style="{ background: gray }" v-on:click="swatchColor(gray)"></button>
             <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
+            <button v-for="customColor in customColors" :key="customColor" :style="{ background: customColor }" v-on:click="swatchColor(customColor)"></button>
+            <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">add</button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
         <button
@@ -85,6 +87,7 @@ export default {
             white: '#ffffff',
             color: '#bf0303',
             cost: 0,
+            customColors: [],
             costModifier: 1,
             zoom: Defaults.ZOOM,
             eraser: Defaults.ERASER,
@@ -125,11 +128,20 @@ export default {
             this.emitter.emit(UserEvents.COLOR, this.color);
             this.emitter.emit(UserEvents.ERASER, this.eraser);
         },
+        addNewColor() {
+          this.saveColor = true;
+          this.isColorOpen = true;
+        },
         showColor(evt) {
             this.isColorOpen = true;
             evt.preventDefault();
         },
         closeColor(evt) {
+            console.log(this.customColors);
+            if (this.saveColor) {
+                this.customColors.push(this.color);
+                this.saveColor = false;
+            }
             this.isColorOpen = false;
             evt.preventDefault();
         },
@@ -254,5 +266,8 @@ export default {
     color: white;
     background: #438d43;
     border-radius: 50%;
+}
+.control-panel .add-swatch {
+    line-height: 16px;
 }
 </style>
