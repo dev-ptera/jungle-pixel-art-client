@@ -31,15 +31,12 @@
             </section>
 
             <section v-if="paymentSuccess" class="success-body">
-                <div
-                    class="material-icons material-icons-outlined empty-state-icon"
-                >
-                    check_circle
-                </div>
+                <div class="material-icons material-icons-outlined empty-state-icon">check_circle</div>
                 <div class="empty-state-title">Success</div>
-                <div class="empty-state-description">Your work of art has been saved & added to the collection. You can now close this window.</div>
+                <div class="empty-state-description">
+                    Your work of art has been saved & added to the collection. You can now close this window.
+                </div>
             </section>
-
 
             <footer class="modal-footer">
                 <a v-if="!paymentSuccess" v-bind:href="openKalium()" style="width: 100%">
@@ -188,7 +185,8 @@ export default {
     background: transparent;
 }
 
-.success-body, .pending-body {
+.success-body,
+.pending-body {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
@@ -197,7 +195,7 @@ export default {
     padding: 16px;
 }
 .empty-state-icon {
-    color:#438d43;
+    color: #438d43;
     font-size: 96px;
     line-height: 96px;
 }
@@ -244,7 +242,7 @@ export default {
 }
 
 .footer-button:hover {
-    background: #277125!important;
+    background: #277125 !important;
     cursor: pointer;
 }
 
@@ -261,5 +259,4 @@ export default {
 .footer-button[disabled] {
     opacity: 0.5;
 }
-
 </style>

@@ -14,7 +14,7 @@ export const getBoard = () =>
         })
         .then((response) => {
             emitter.emit(UserEvents.COST_PER_PIXEL_LOADED, response.data.costPerPixel);
-            return Promise.resolve(response.data)
+            return Promise.resolve(response.data);
         })
         .catch((err) => Promise.reject(err.data));
 
@@ -40,7 +40,7 @@ export const getPaymentAddress = (pixels) => {
                 emitter.emit(UserEvents.PAYMENT_ADDRESS, {
                     address: data.address,
                     raw: data.raw,
-                    cost: data.cost
+                    cost: data.cost,
                 });
             } else if (data.success) {
                 emitter.emit(UserEvents.PAYMENT_SUCCESS, data.board);

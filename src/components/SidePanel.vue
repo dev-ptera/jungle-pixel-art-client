@@ -149,7 +149,7 @@ export default {
         this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
         this.emitter.on(UserEvents.COST_PER_PIXEL_LOADED, (costModifier) => {
             this.costModifier = costModifier;
-        })
+        });
         this.emitter.on(UserEvents.PIXEL_COUNT, (pixelCount) => {
             this.cost = Math.ceil(this.costModifier * pixelCount);
         });
