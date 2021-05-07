@@ -22,8 +22,10 @@ export default {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
 #app {
-    font-family: 'Open Sans', sans-serif;
     margin: 0;
+}
+#app, button {
+    font-family: 'Open Sans', sans-serif;
 }
 body {
     margin: 0;

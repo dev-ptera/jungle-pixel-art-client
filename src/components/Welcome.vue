@@ -101,7 +101,7 @@ export default {
     z-index: 1;
     font-size: 16px;
     line-height: 16px;
-    font-weight: 200;
+    font-weight: 400;
     margin-bottom: 8px;
     margin-bottom: 16px;
 }
@@ -152,7 +152,7 @@ export default {
     border-radius: 4px;
     height: 36px;
     font-size: 12px;
-    font-weight: 200;
+    font-weight: 400;
     width: 100%;
     border: solid 1px #dcdcd0;
     letter-spacing: 2px;

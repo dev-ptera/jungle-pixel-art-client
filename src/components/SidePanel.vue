@@ -218,6 +218,7 @@ export default {
     line-height: 56px;
     background: #60c15f;
     color: #101010;
+    border: solid 1px #1d1d1d;
 }
 .control-panel * {
     -webkit-user-select: none !important;
@@ -230,9 +231,15 @@ export default {
 .control-panel .scroll-lock-button.screen-lock {
     background: #60c15f;
 }
+.swatches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 .control-panel .swatches button {
-    width: 28px;
-    height: 28px;
+    width: 27px;
+    height: 27px;
+    border: solid 2px #2f2f2f;
 }
 .vacp-color-picker {
     position: fixed;

@@ -44,7 +44,8 @@ export default {
             });
             this.emitter.on(UserEvents.ZOOM, (zoom) => {
                 this.zoom = zoom;
-                this.canvas.style.zoom = `${this.zoom}`;
+                this.zoomGrid(zoom);
+
             });
             this.emitter.on(UserEvents.ERASER, (eraser) => {
                 this.eraser = eraser;
@@ -105,10 +106,17 @@ export default {
         makeKey(x, y) {
             return `${x},${y}`;
         },
+        zoomGrid(zoom) {
+          //  this.canvas.style.zoom = `${zoom}`;
+            console.log('zooming grid');
+            this.canvas.style.transform = `scale(${zoom})`;
+            this.canvas.style.MozTransform = `scale(${zoom}, ${zoom})`;
+
+        },
         drawGrid(color) {
             this.canvas = document.getElementById('myCanvas');
             this.context = this.canvas.getContext('2d');
-            this.canvas.style.zoom = this.zoom;
+            this.zoomGrid(this.zoom);
             // Draw Grid
             for (let x = 0; x < this.maxCanvasWidth + 1; x += this.cellSize) {
                 this.context.moveTo(x, 0);
@@ -148,8 +156,8 @@ export default {
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();
             return {
-                x: eventX / this.zoom - rect.left - ((eventX / this.zoom - rect.left) % this.cellSize),
-                y: eventY / this.zoom - rect.top - ((eventY / this.zoom - rect.top) % this.cellSize),
+                x: eventX / this.zoom - rect.left / this.zoom - ((eventX / this.zoom - rect.left / this.zoom) % this.cellSize),
+                y: eventY / this.zoom - rect.top / this.zoom - ((eventY / this.zoom - rect.top / this.zoom) % this.cellSize),
             };
         },
         loadBoard() {
@@ -188,5 +196,8 @@ export default {
     background: white;
     border-bottom: solid 2px red;
     border-right: solid 2px red;
+    -ms-transform-origin: left top;
+    -moz-transform-origin: left top;
+    -webkit-transform-origin: left top;
 }
 </style>
