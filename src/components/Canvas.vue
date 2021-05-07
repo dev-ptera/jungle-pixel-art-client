@@ -45,7 +45,6 @@ export default {
             this.emitter.on(UserEvents.ZOOM, (zoom) => {
                 this.zoom = zoom;
                 this.zoomGrid(zoom);
-
             });
             this.emitter.on(UserEvents.ERASER, (eraser) => {
                 this.eraser = eraser;
@@ -107,11 +106,10 @@ export default {
             return `${x},${y}`;
         },
         zoomGrid(zoom) {
-          //  this.canvas.style.zoom = `${zoom}`;
+            //  this.canvas.style.zoom = `${zoom}`;
             console.log('zooming grid');
             this.canvas.style.transform = `scale(${zoom})`;
             this.canvas.style.MozTransform = `scale(${zoom}, ${zoom})`;
-
         },
         drawGrid(color) {
             this.canvas = document.getElementById('myCanvas');
@@ -156,8 +154,14 @@ export default {
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();
             return {
-                x: eventX / this.zoom - rect.left / this.zoom - ((eventX / this.zoom - rect.left / this.zoom) % this.cellSize),
-                y: eventY / this.zoom - rect.top / this.zoom - ((eventY / this.zoom - rect.top / this.zoom) % this.cellSize),
+                x:
+                    eventX / this.zoom -
+                    rect.left / this.zoom -
+                    ((eventX / this.zoom - rect.left / this.zoom) % this.cellSize),
+                y:
+                    eventY / this.zoom -
+                    rect.top / this.zoom -
+                    ((eventY / this.zoom - rect.top / this.zoom) % this.cellSize),
             };
         },
         loadBoard() {

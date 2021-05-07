@@ -24,7 +24,8 @@ export default {
 #app {
     margin: 0;
 }
-#app, button {
+#app,
+button {
     font-family: 'Open Sans', sans-serif;
 }
 body {

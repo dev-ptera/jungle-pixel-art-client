@@ -23,7 +23,12 @@
             <div class="current-color" :style="{ background: color }"></div>
         </button>
         <div class="swatches">
-            <button v-for="swatch in defaultSwatches" :key="swatch" v-bind:style="{ 'background-color': swatch }" v-on:click="swatchColor(swatch)"></button>
+            <button
+                v-for="swatch in defaultSwatches"
+                :key="swatch"
+                v-bind:style="{ 'background-color': swatch }"
+                v-on:click="swatchColor(swatch)"
+            ></button>
             <button
                 v-for="customColor in customColors"
                 :key="customColor"
@@ -81,7 +86,7 @@ export default {
                 '#651cd7',
                 '#151515',
                 '#8b8b8b',
-                '#ffffff'
+                '#ffffff',
             ],
             cost: 0,
             customColors: [],
