@@ -24,25 +24,32 @@
         </button>
         <div class="swatches">
             <button
-                v-for="swatch in defaultSwatches"
+                class="material-icons material-icons-outlined"
+                v-for="swatch in swatches"
                 :key="swatch"
                 v-bind:style="{ 'background-color': swatch }"
                 v-on:click="swatchColor(swatch)"
-            ></button>
-            <button
-                v-for="customColor in customColors"
-                :key="customColor"
-                :style="{ background: customColor }"
-                v-on:click="swatchColor(customColor)"
-            ></button>
-            <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">add</button>
-            <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">remove</button>
+            >
+                {{ removeColor ? 'remove_circle_outline' : '' }}
+            </button>
+            <div>
+                <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">
+                    add
+                </button>
+                <button
+                    class="material-icons material-icons-outlined add-swatch"
+                    v-on:click="removeColor = !removeColor"
+                    v-bind:class="{ 'remove-swatch-active': removeColor }"
+                >
+                    remove
+                </button>
+            </div>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
         <button
             style="position: relative"
             class="material-icons material-icons-outlined"
-            v-bind:class="{ emptyCart: cost === 0 }"
+            v-bind:class="{ 'empty-cart': cost === 0 }"
             v-on:click="openCheckout"
         >
             <div v-if="cost" class="shopping-cart-badge">
@@ -74,7 +81,7 @@ export default {
     data() {
         return {
             color: '#bf0303',
-            defaultSwatches: [
+            swatches: [
                 '#bf0303',
                 '#f8be12',
                 '#f6f110',
@@ -89,7 +96,6 @@ export default {
                 '#ffffff',
             ],
             cost: 0,
-            customColors: [],
             costModifier: 1,
             zoom: Defaults.ZOOM,
             eraser: Defaults.ERASER,
@@ -97,6 +103,7 @@ export default {
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
             isTouchDevice: undefined,
+            removeColor: false,
         };
     },
     methods: {
@@ -138,6 +145,13 @@ export default {
             this.emitter.emit(UserEvents.COLOR, this.color);
         },
         swatchColor(color) {
+            if (this.removeColor) {
+                const index = this.swatches.indexOf(color);
+                if (index > -1) {
+                    this.swatches.splice(index, 1);
+                }
+                return;
+            }
             this.color = color;
             this.eraser = false;
             this.emitter.emit(UserEvents.COLOR, this.color);
@@ -152,9 +166,8 @@ export default {
             evt.preventDefault();
         },
         closeColor(evt) {
-            console.log(this.customColors);
             if (this.saveColor) {
-                this.customColors.push(this.color);
+                this.swatches.push(this.color);
                 this.saveColor = false;
             }
             this.isColorOpen = false;
@@ -225,6 +238,9 @@ export default {
     background: #277125;
     cursor: pointer;
 }
+.control-panel .remove-swatch-active {
+    background: #277125;
+}
 .control-panel .scroll-lock-button.screen-lock {
     background: #60c15f;
 }
@@ -237,6 +253,8 @@ export default {
     width: 27px;
     height: 27px;
     border: solid 2px #2f2f2f;
+    font-size: 18px;
+    line-height: 18px;
 }
 .vacp-color-picker {
     position: fixed;
@@ -269,7 +287,7 @@ export default {
     width: 8px;
     border: solid 1px white;
 }
-.emptyCart {
+.empty-cart {
     opacity: 0.3;
 }
 .shopping-cart-badge {
