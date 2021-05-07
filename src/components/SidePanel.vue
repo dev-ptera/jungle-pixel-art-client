@@ -23,18 +23,7 @@
             <div class="current-color" :style="{ background: color }"></div>
         </button>
         <div class="swatches">
-            <button :style="{ background: red }" v-on:click="swatchColor(red)"></button>
-            <button :style="{ background: orange }" v-on:click="swatchColor(orange)"></button>
-            <button :style="{ background: yellow }" v-on:click="swatchColor(yellow)"></button>
-            <button :style="{ background: lime }" v-on:click="swatchColor(lime)"></button>
-            <button :style="{ background: green }" v-on:click="swatchColor(green)"></button>
-            <button :style="{ background: cyan }" v-on:click="swatchColor(cyan)"></button>
-            <button :style="{ background: teal }" v-on:click="swatchColor(teal)"></button>
-            <button :style="{ background: blue }" v-on:click="swatchColor(blue)"></button>
-            <button :style="{ background: purple }" v-on:click="swatchColor(purple)"></button>
-            <button :style="{ background: black }" v-on:click="swatchColor(black)"></button>
-            <button :style="{ background: gray }" v-on:click="swatchColor(gray)"></button>
-            <button :style="{ background: white }" v-on:click="swatchColor(white)"></button>
+            <button v-for="swatch in defaultSwatches" :key="swatch" v-bind:style="{ 'background-color': swatch }" v-on:click="swatchColor(swatch)"></button>
             <button
                 v-for="customColor in customColors"
                 :key="customColor"
@@ -42,6 +31,7 @@
                 v-on:click="swatchColor(customColor)"
             ></button>
             <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">add</button>
+            <button class="material-icons material-icons-outlined add-swatch" v-on:click="addNewColor()">remove</button>
         </div>
         <div style="display: flex; flex: 1 1 0"></div>
         <button
@@ -78,19 +68,21 @@ export default {
     },
     data() {
         return {
-            red: '#bf0303',
-            orange: '#f8be12',
-            yellow: '#f6f110',
-            lime: '#92ea4c',
-            green: '#259a36',
-            cyan: '#46eaad',
-            teal: '#06a6e5',
-            blue: '#193ae7',
-            purple: '#651cd7',
-            black: '#151515',
-            gray: '#8b8b8b',
-            white: '#ffffff',
             color: '#bf0303',
+            defaultSwatches: [
+                '#bf0303',
+                '#f8be12',
+                '#f6f110',
+                '#92ea4c',
+                '#259a36',
+                '#46eaad',
+                '#06a6e5',
+                '#193ae7',
+                '#651cd7',
+                '#151515',
+                '#8b8b8b',
+                '#ffffff'
+            ],
             cost: 0,
             customColors: [],
             costModifier: 1,
