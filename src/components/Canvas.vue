@@ -22,7 +22,7 @@ export default {
             context: undefined,
             mouseDown: false,
             pixels: new Map(),
-            confirmedPixels: new Map(),
+            confirmedPixels: new Set(),
             cellSize: 6,
             maxCanvasHeight: 6 * 600,
             maxCanvasWidth: 6 * 600,
@@ -32,6 +32,7 @@ export default {
             screenLock: Defaults.SCREEN_LOCK,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
+            bucketFill: Defaults.BUCKET_FILL,
         };
     },
     methods: {
@@ -49,6 +50,9 @@ export default {
             this.emitter.on(UserEvents.ERASER, (eraser) => {
                 this.eraser = eraser;
             });
+            this.emitter.on(UserEvents.BUCKET_FILL, (bucketFill) => {
+                this.bucketFill = bucketFill;
+            });
             this.emitter.on(UserEvents.CHECKOUT, () => {
                 this.emitter.emit(UserEvents.CHECKOUT_PIXELS, this.pixels);
             });
@@ -56,7 +60,7 @@ export default {
                 this.pixels.clear();
                 this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
                 for (const key in pixelsObj) {
-                    this.confirmedPixels.set(key, pixelsObj[key]);
+                    this.confirmedPixels.add(key);
                 }
             });
         },
@@ -87,13 +91,16 @@ export default {
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.fillSquare(mousePos.x, mousePos.y);
+                    this.bucketFill ? this.fillBucket(mousePos.x, mousePos.y) : this.fillSquare(mousePos.x, mousePos.y);
                 },
                 false
             );
             this.canvas.addEventListener(
                 'mousemove',
                 (evt) => {
+                    if (this.bucketFill) {
+                        return;
+                    }
                     if (this.mouseDown) {
                         const mousePos = this.getSquare(evt.clientX, evt.clientY);
                         this.fillSquare(mousePos.x, mousePos.y);
@@ -105,9 +112,14 @@ export default {
         makeKey(x, y) {
             return `${x},${y}`;
         },
+        parseKey(key) {
+            const split = key.split(',');
+            return {
+                x: split[0],
+                y: split[1],
+            };
+        },
         zoomGrid(zoom) {
-            //  this.canvas.style.zoom = `${zoom}`;
-            console.log('zooming grid');
             this.canvas.style.transform = `scale(${zoom})`;
             this.canvas.style.MozTransform = `scale(${zoom}, ${zoom})`;
         },
@@ -126,6 +138,26 @@ export default {
             }
             this.context.strokeStyle = color;
             this.context.stroke();
+        },
+        fillBucket(x, y) {
+            const pixelKey = this.makeKey(x, y);
+            if (
+                this.pixels.get(pixelKey) ||
+                this.confirmedPixels.has(pixelKey) ||
+                x < 0 ||
+                y < 0 ||
+                x > this.maxCanvasWidth ||
+                y > this.maxCanvasHeight
+            ) {
+                return;
+            }
+            this.context.fillStyle = this.fillColor;
+            this.context.fillRect(x, y, this.cellSize, this.cellSize);
+            this.pixels.set(pixelKey, this.fillColor);
+            this.fillBucket(x + this.cellSize, y);
+            this.fillBucket(x, y + this.cellSize);
+            this.fillBucket(x - this.cellSize, y);
+            this.fillBucket(x, y - this.cellSize);
         },
         fillSquare(x, y) {
             const pixelKey = this.makeKey(x, y);
@@ -167,9 +199,10 @@ export default {
         loadBoard() {
             getBoard()
                 .then((data) => {
+                    this.confirmedPixels = new Set();
                     for (const key in data.pixels) {
                         const [x, y] = key.split(',');
-                        this.confirmedPixels.set(key, data[key]);
+                        this.confirmedPixels.add(this.makeKey(x, y));
                         this.context.fillStyle = data.pixels[key];
                         this.context.fillRect(x, y, this.cellSize, this.cellSize);
                     }

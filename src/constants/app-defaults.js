@@ -4,3 +4,4 @@ export const FILL_COLOR = '#bf0303';
 export const SHOW_CHECKOUT = false;
 export const ERASER = false;
 export const COLOR_OPEN = false;
+export const BUCKET_FILL = false;

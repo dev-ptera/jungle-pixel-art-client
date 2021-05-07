@@ -1,6 +1,7 @@
 export const ZOOM = 'zoom';
 export const ERASER = 'eraser';
 export const SCREEN_LOCK = 'screenLock';
+export const BUCKET_FILL = 'bucketFill';
 export const COLOR = 'color';
 // Sends number of squares selected.
 export const PIXEL_COUNT = 'pixelCount';

@@ -18,6 +18,13 @@
         >
             brush
         </button>
+        <button
+            class="material-icons material-icons-outlined"
+            v-on:click="bucketFill"
+            v-bind:class="{ 'button-active': useFill }"
+        >
+            format_color_fill
+        </button>
         <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
             palette
             <div class="current-color" :style="{ background: color }"></div>
@@ -28,7 +35,7 @@
                 v-for="swatch in swatches"
                 :key="swatch"
                 v-bind:style="{ 'background-color': swatch }"
-                v-on:click="swatchColor(swatch)"
+                v-on:click="selectColor($event, swatch)"
             >
                 {{ removeColor ? 'remove_circle_outline' : '' }}
             </button>
@@ -39,7 +46,7 @@
                 <button
                     class="material-icons material-icons-outlined add-swatch"
                     v-on:click="removeColor = !removeColor"
-                    v-bind:class="{ 'remove-swatch-active': removeColor }"
+                    v-bind:class="{ 'button-active': removeColor }"
                 >
                     remove
                 </button>
@@ -102,6 +109,7 @@ export default {
             screenLock: false /* Edits enabled */,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
+            useFill: Defaults.BUCKET_FILL,
             isTouchDevice: undefined,
             removeColor: false,
         };
@@ -129,6 +137,11 @@ export default {
             this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
             evt.preventDefault();
         },
+        bucketFill(evt) {
+            this.useFill = !this.useFill;
+            this.emitter.emit(UserEvents.BUCKET_FILL, this.useFill);
+            evt.preventDefault();
+        },
         toggleScreenLock(evt) {
             if (this.eraser) {
                 this.screenLock = false;
@@ -144,18 +157,20 @@ export default {
             this.color = eventData.colors.hex;
             this.emitter.emit(UserEvents.COLOR, this.color);
         },
-        swatchColor(color) {
+        selectColor(evt, color) {
             if (this.removeColor) {
                 const index = this.swatches.indexOf(color);
                 if (index > -1) {
                     this.swatches.splice(index, 1);
                 }
+                evt.preventDefault();
                 return;
             }
             this.color = color;
             this.eraser = false;
             this.emitter.emit(UserEvents.COLOR, this.color);
             this.emitter.emit(UserEvents.ERASER, this.eraser);
+            evt.preventDefault();
         },
         addNewColor() {
             this.saveColor = true;
@@ -238,7 +253,7 @@ export default {
     background: #277125;
     cursor: pointer;
 }
-.control-panel .remove-swatch-active {
+.control-panel .button-active {
     background: #277125;
 }
 .control-panel .scroll-lock-button.screen-lock {
