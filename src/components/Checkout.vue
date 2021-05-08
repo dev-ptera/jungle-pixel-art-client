@@ -82,7 +82,7 @@ export default {
             paymentAddress: undefined,
             rawAmount: undefined,
             timeRemainingSeconds: undefined,
-            timeoutInterval: undefined
+            timeoutInterval: undefined,
         };
     },
     mounted() {
