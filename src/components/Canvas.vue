@@ -7,7 +7,7 @@
             v-bind:height="maxCanvasHeight"
             v-bind:style="{
                 'max-width': maxCanvasWidth * zoom + 'px',
-                'max-height': maxCanvasHeight * zoom + 'px'
+                'max-height': maxCanvasHeight * zoom + 'px',
             }"
         ></canvas>
     </div>
