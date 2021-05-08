@@ -44,9 +44,9 @@ export default {
             this.emitter.on(UserEvents.TOUCH_DEVICE_DETECTED, (isTouchDevice) => {
                 this.isTouchDevice = isTouchDevice;
             }),
-            this.emitter.on(UserEvents.DRAW_ENABLED, (drawEnabled) => {
-                this.drawEnabled = drawEnabled;
-            });
+                this.emitter.on(UserEvents.DRAW_ENABLED, (drawEnabled) => {
+                    this.drawEnabled = drawEnabled;
+                });
             this.emitter.on(UserEvents.ZOOM, (zoom) => {
                 this.zoom = zoom;
                 this.zoomGrid(zoom);
@@ -98,7 +98,9 @@ export default {
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.fillEnabled ? this.fillBucket(mousePos.x, mousePos.y) : this.fillSquare(mousePos.x, mousePos.y);
+                    this.fillEnabled
+                        ? this.fillBucket(mousePos.x, mousePos.y)
+                        : this.fillSquare(mousePos.x, mousePos.y);
                 },
                 false
             );
