@@ -6,7 +6,6 @@
             <img src="../assets/eraser.svg" height="24" />
         </button>
         <button
-            style="position: relative"
             class="material-icons material-icons-outlined scroll-lock-button"
             v-if:="isTouchDevice"
             v-bind:class="{ 'button-active': drawEnabled }"
@@ -48,6 +47,11 @@
                 </button>
             </div>
         </div>
+        <!--
+        <button class="material-icons material-icons-outlined" v-on:click="undo">
+            undo
+        </button>
+        -->
         <div style="display: flex; flex: 1 1 0"></div>
         <button
             style="position: relative"
@@ -180,6 +184,10 @@ export default {
                 this.saveColor = false;
             }
             this.isColorOpen = false;
+            evt.preventDefault();
+        },
+        undo(evt) {
+            this.emitter.emit(UserEvents.UNDO);
             evt.preventDefault();
         },
         openCheckout(evt) {

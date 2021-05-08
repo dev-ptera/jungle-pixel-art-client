@@ -34,6 +34,7 @@ export default {
             fillEnabled: Defaults.FILL_ENABLED,
             drawEnabled: Defaults.DRAW_ENABLED,
             eraserEnabled: Defaults.ERASER_ENABLED,
+            previousEvents: [], // Array<Map<pixelKey, 'color'>
         };
     },
     methods: {
@@ -59,6 +60,9 @@ export default {
             });
             this.emitter.on(UserEvents.CHECKOUT, () => {
                 this.emitter.emit(UserEvents.CHECKOUT_PIXELS, this.pixels);
+            });
+            this.emitter.on(UserEvents.UNDO, () => {
+                this.undo();
             });
             this.emitter.on(UserEvents.PAYMENT_SUCCESS, (pixelsObj) => {
                 this.pixels.clear();
@@ -163,6 +167,7 @@ export default {
         },
         fillSquare(x, y) {
             const pixelKey = this.makeKey(x, y);
+            const currentColor = this.pixels.get(pixelKey);
             /* Uneditable pixel */
             if (this.confirmedPixels.has(pixelKey)) {
                 return;
@@ -174,7 +179,7 @@ export default {
                 }
                 this.context.clearRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.delete(pixelKey);
-            } else if (!this.pixels.get(pixelKey) || this.pixels.get(pixelKey) !== this.fillColor) {
+            } else if (!this.pixels.get(pixelKey) || currentColor !== this.fillColor) {
                 /* New/edit pixel */
                 if (this.pixels.get(pixelKey)) {
                     this.context.clearRect(x, y, this.cellSize, this.cellSize);
@@ -182,6 +187,9 @@ export default {
                 this.context.fillStyle = this.fillColor;
                 this.context.fillRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.set(pixelKey, this.fillColor);
+                const action = new Map();
+                action.set(pixelKey, currentColor);
+                this.previousEvents.push(action);
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
         },
@@ -212,6 +220,20 @@ export default {
                 .catch((err) => {
                     console.error(err);
                 });
+        },
+        undo() {
+            const actions = this.previousEvents.shift();
+            for (const pixelKey of actions.keys()) {
+                const [x, y] = pixelKey.split(',');
+                // TODO make this a function?
+                const fill = actions.get(pixelKey);
+                if (fill) {
+                    this.context.fillStyle = actions.get(pixelKey);
+                    this.context.fillRect(x, y, this.cellSize, this.cellSize);
+                } else {
+                    this.context.clearRect(x, y, this.cellSize, this.cellSize);
+                }
+            }
         },
     },
     mounted() {
