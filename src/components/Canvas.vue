@@ -21,18 +21,19 @@ export default {
             canvas: undefined,
             context: undefined,
             mouseDown: false,
+            isTouchDevice: false,
             pixels: new Map(),
             confirmedPixels: new Set(),
-            cellSize: 6,
-            maxCanvasHeight: 6 * 600,
-            maxCanvasWidth: 6 * 600,
+            maxCanvasHeight: Defaults.CELL_SIZE * 600,
+            maxCanvasWidth: Defaults.CELL_SIZE * 600,
             zoom: Defaults.ZOOM,
-            eraser: Defaults.ERASER,
+            cellSize: Defaults.CELL_SIZE,
             fillColor: Defaults.FILL_COLOR,
-            screenLock: Defaults.SCREEN_LOCK,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
-            bucketFill: Defaults.BUCKET_FILL,
+            fillEnabled: Defaults.FILL_ENABLED,
+            drawEnabled: Defaults.DRAW_ENABLED,
+            eraserEnabled: Defaults.ERASER_ENABLED,
         };
     },
     methods: {
@@ -40,18 +41,21 @@ export default {
             this.emitter.on(UserEvents.COLOR, (color) => {
                 this.fillColor = color;
             });
-            this.emitter.on(UserEvents.SCREEN_LOCK, (screenLock) => {
-                this.screenLock = screenLock;
+            this.emitter.on(UserEvents.TOUCH_DEVICE_DETECTED, (isTouchDevice) => {
+                this.isTouchDevice = isTouchDevice;
+            }),
+            this.emitter.on(UserEvents.DRAW_ENABLED, (drawEnabled) => {
+                this.drawEnabled = drawEnabled;
             });
             this.emitter.on(UserEvents.ZOOM, (zoom) => {
                 this.zoom = zoom;
                 this.zoomGrid(zoom);
             });
             this.emitter.on(UserEvents.ERASER, (eraser) => {
-                this.eraser = eraser;
+                this.eraserEnabled = eraser;
             });
             this.emitter.on(UserEvents.BUCKET_FILL, (bucketFill) => {
-                this.bucketFill = bucketFill;
+                this.fillEnabled = bucketFill;
             });
             this.emitter.on(UserEvents.CHECKOUT, () => {
                 this.emitter.emit(UserEvents.CHECKOUT_PIXELS, this.pixels);
@@ -64,12 +68,15 @@ export default {
                 }
             });
         },
+        canvasEditable() {
+            return !this.isTouchDevice || this.drawEnabled || this.fillEnabled || this.eraserEnabled;
+        },
         listenForUserEvents() {
             // Mobile Events
             this.canvas.addEventListener(
                 'touchmove',
                 (evt) => {
-                    if (this.screenLock) {
+                    if (!this.canvasEditable()) {
                         return;
                     }
                     if (evt.touches && evt.touches.length === 1) {
@@ -87,18 +94,18 @@ export default {
             this.canvas.addEventListener(
                 'click',
                 (evt) => {
-                    if (this.screenLock) {
+                    if (!this.canvasEditable()) {
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.bucketFill ? this.fillBucket(mousePos.x, mousePos.y) : this.fillSquare(mousePos.x, mousePos.y);
+                    this.fillEnabled ? this.fillBucket(mousePos.x, mousePos.y) : this.fillSquare(mousePos.x, mousePos.y);
                 },
                 false
             );
             this.canvas.addEventListener(
                 'mousemove',
                 (evt) => {
-                    if (this.bucketFill) {
+                    if (this.fillEnabled) {
                         return;
                     }
                     if (this.mouseDown) {
@@ -111,13 +118,6 @@ export default {
         },
         makeKey(x, y) {
             return `${x},${y}`;
-        },
-        parseKey(key) {
-            const split = key.split(',');
-            return {
-                x: split[0],
-                y: split[1],
-            };
         },
         zoomGrid(zoom) {
             this.canvas.style.transform = `scale(${zoom})`;
@@ -166,7 +166,7 @@ export default {
                 return;
             }
             /* Remove pixel */
-            if (this.eraser) {
+            if (this.eraserEnabled) {
                 if (!this.pixels.get(pixelKey)) {
                     return;
                 }
@@ -227,6 +227,7 @@ export default {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;
+    display: grid;
     -webkit-user-select: none !important;
 }
 #myCanvas {

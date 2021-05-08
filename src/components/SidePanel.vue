@@ -5,7 +5,7 @@
         <button
             v-on:click="toggleEraser"
             style="line-height: 74px"
-            :style="{ background: eraser ? '#277125' : '#60c15f' }"
+            v-bind:class="{ 'button-active': eraserEnabled }"
         >
             <img src="../assets/eraser.svg" height="24" />
         </button>
@@ -13,15 +13,15 @@
             style="position: relative"
             class="material-icons material-icons-outlined scroll-lock-button"
             v-if:="isTouchDevice"
-            v-bind:class="{ 'screen-lock': screenLock || eraser }"
-            v-on:click="toggleScreenLock"
+            v-bind:class="{ 'button-active': drawEnabled }"
+            v-on:click="toggleDrawEnabled"
         >
             brush
         </button>
         <button
             class="material-icons material-icons-outlined"
-            v-on:click="bucketFill"
-            v-bind:class="{ 'button-active': useFill }"
+            v-on:click="toggleBucketFill"
+            v-bind:class="{ 'button-active': fillEnabled }"
         >
             format_color_fill
         </button>
@@ -105,11 +105,11 @@ export default {
             cost: 0,
             costModifier: 1,
             zoom: Defaults.ZOOM,
-            eraser: Defaults.ERASER,
-            screenLock: false /* Edits enabled */,
+            eraserEnabled: Defaults.ERASER_ENABLED,
+            drawEnabled: false,
+            fillEnabled: Defaults.FILL_ENABLED,
             isColorOpen: Defaults.COLOR_OPEN,
             showCheckout: Defaults.SHOW_CHECKOUT,
-            useFill: Defaults.BUCKET_FILL,
             isTouchDevice: undefined,
             removeColor: false,
         };
@@ -125,32 +125,30 @@ export default {
             this.emitter.emit(UserEvents.ZOOM, zoom);
             evt.preventDefault();
         },
+        emitSidePanelDrawActions() {
+            this.emitter.emit(UserEvents.ERASER, this.eraserEnabled);
+            this.emitter.emit(UserEvents.DRAW_ENABLED, this.drawEnabled);
+            this.emitter.emit(UserEvents.BUCKET_FILL, this.fillEnabled);
+        },
         toggleEraser(evt) {
-            this.eraser = !this.eraser;
-            if (this.eraser) {
-                this.screenLock = false;
-            }
-            if (!this.eraser) {
-                this.screenLock = true;
-            }
-            this.emitter.emit(UserEvents.ERASER, this.eraser);
-            this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
+            this.eraserEnabled = !this.eraserEnabled;
+            this.drawEnabled = false;
+            this.fillEnabled = false;
+            this.emitSidePanelDrawActions();
             evt.preventDefault();
         },
-        bucketFill(evt) {
-            this.useFill = !this.useFill;
-            this.emitter.emit(UserEvents.BUCKET_FILL, this.useFill);
+        toggleBucketFill(evt) {
+            this.fillEnabled = !this.fillEnabled;
+            this.drawEnabled = false;
+            this.eraserEnabled = false;
+            this.emitSidePanelDrawActions();
             evt.preventDefault();
         },
-        toggleScreenLock(evt) {
-            if (this.eraser) {
-                this.screenLock = false;
-                this.eraser = false;
-            } else {
-                this.screenLock = !this.screenLock;
-            }
-            this.emitter.emit(UserEvents.ERASER, this.eraser);
-            this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
+        toggleDrawEnabled(evt) {
+            this.drawEnabled = !this.drawEnabled;
+            this.fillEnabled = false;
+            this.eraserEnabled = false;
+            this.emitSidePanelDrawActions();
             evt.preventDefault();
         },
         updateColor(eventData) {
@@ -167,9 +165,9 @@ export default {
                 return;
             }
             this.color = color;
-            this.eraser = false;
+            this.eraserEnabled = false;
             this.emitter.emit(UserEvents.COLOR, this.color);
-            this.emitter.emit(UserEvents.ERASER, this.eraser);
+            this.emitter.emit(UserEvents.ERASER, this.eraserEnabled);
             evt.preventDefault();
         },
         addNewColor() {
@@ -210,8 +208,9 @@ export default {
         /* Enable screen lock for touch devices on load. */
         if (this.isTouchDevice) {
             setTimeout(() => {
-                this.screenLock = true;
-                this.emitter.emit(UserEvents.SCREEN_LOCK, this.screenLock);
+                this.drawEnabled = false;
+                this.emitter.emit(UserEvents.DRAW_ENABLED, this.drawEnabled);
+                this.emitter.emit(UserEvents.TOUCH_DEVICE_DETECTED, this.isTouchDevice);
             });
         }
     },
@@ -248,16 +247,8 @@ export default {
 .control-panel * {
     -webkit-user-select: none !important;
 }
-.control-panel:not(.isTouchDevice) button:hover,
-.control-panel .scroll-lock-button:not(.screen-lock) {
-    background: #277125;
-    cursor: pointer;
-}
 .control-panel .button-active {
     background: #277125;
-}
-.control-panel .scroll-lock-button.screen-lock {
-    background: #60c15f;
 }
 .swatches {
     display: flex;

@@ -1,6 +1,6 @@
 export const ZOOM = 'zoom';
 export const ERASER = 'eraser';
-export const SCREEN_LOCK = 'screenLock';
+export const DRAW_ENABLED = 'drawEnabled';
 export const BUCKET_FILL = 'bucketFill';
 export const COLOR = 'color';
 // Sends number of squares selected.
@@ -14,3 +14,4 @@ export const CHECKOUT_ERROR = 'checkoutError';
 export const PAYMENT_SUCCESS = 'paymentSuccess';
 export const PAYMENT_WINDOW_CLOSED = 'paymentClosed';
 export const COST_PER_PIXEL_LOADED = 'costPerPixelLoaded';
+export const TOUCH_DEVICE_DETECTED = 'touchDeviceDetected';
