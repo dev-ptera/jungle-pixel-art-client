@@ -229,7 +229,9 @@ export default {
     flex-direction: column;
     top: 0;
     left: 0;
-    height: 100vh;
+    min-height: 100vh;
+    /* mobile viewport bug fix */
+    min-height: -webkit-fill-available;
     width: 56px;
     text-align: center;
     background-color: #2a2a2e;
