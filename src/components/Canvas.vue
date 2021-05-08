@@ -5,6 +5,10 @@
             oncontextmenu="return false;"
             v-bind:width="maxCanvasWidth"
             v-bind:height="maxCanvasHeight"
+            v-bind:style="{
+                'max-width': maxCanvasWidth * zoom + 'px',
+                'max-height': maxCanvasHeight * zoom + 'px'
+            }"
         ></canvas>
     </div>
 </template>
@@ -251,6 +255,7 @@ export default {
     margin-left: 56px;
     overflow: scroll;
     height: 100vh;
+    min-height: 100vh;
     display: grid;
     -webkit-user-select: none !important;
 }
