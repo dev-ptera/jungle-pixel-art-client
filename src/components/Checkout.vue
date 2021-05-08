@@ -65,6 +65,7 @@ export default {
             this.paymentAddress = undefined;
             this.paymentSuccess = undefined;
             this.timeRemainingSeconds = undefined;
+            clearTimeout(this.timeoutInterval);
             this.emitter.emit(UserEvents.PAYMENT_WINDOW_CLOSED);
             this.$emit('close');
         },
@@ -81,6 +82,7 @@ export default {
             paymentAddress: undefined,
             rawAmount: undefined,
             timeRemainingSeconds: undefined,
+            timeoutInterval: undefined
         };
     },
     mounted() {
@@ -95,15 +97,14 @@ export default {
             getPaymentAddress(pixels);
         });
         this.emitter.on(UserEvents.PAYMENT_ADDRESS, (data) => {
-            console.log(data);
             this.paymentAddress = data.address;
             this.cost = data.cost;
             this.rawAmount = data.raw;
             this.timeRemainingSeconds = Math.round((data.timeout - 1000) / 1000);
-            const timeoutInterval = setInterval(() => {
+            this.timeoutInterval = setInterval(() => {
                 this.timeRemainingSeconds -= 1;
                 if (this.timeRemainingSeconds <= 0) {
-                    clearInterval(timeoutInterval);
+                    clearInterval(this.timeoutInterval);
                 }
             }, 1000);
             setTimeout(() => {
