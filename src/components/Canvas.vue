@@ -102,7 +102,14 @@ export default {
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.fillEnabled ?  this.fillBucket(mousePos.x, mousePos.y) : this.editSquare(mousePos.x, mousePos.y);
+                    const x = mousePos.x;
+                    const y = mousePos.y;
+                    if (this.fillEnabled) {
+                        const overrideColor = this.pixels.get(this.makeKey(x, y));
+                        this.fillBucket(x, y, overrideColor);
+                    } else {
+                        this.editSquare(mousePos.x, mousePos.y);
+                    }
                 },
                 false
             );
@@ -143,12 +150,12 @@ export default {
             this.context.strokeStyle = color;
             this.context.stroke();
         },
-        fillBucket(x, y, depth = 0) {
+        fillBucket(x, y, overrideColor, depth = 0) {
             const pixelKey = this.makeKey(x, y);
             setTimeout(() => {
                 if (
                     depth >= 20 ||
-                    this.pixels.get(pixelKey) ||
+                    this.pixels.get(pixelKey) !== overrideColor ||
                     this.confirmedPixels.has(pixelKey) ||
                     x < 0 ||
                     y < 0 ||
@@ -161,10 +168,10 @@ export default {
                 this.context.fillRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.set(pixelKey, this.fillColor);
                 this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
-                this.fillBucket(x + this.cellSize, y, depth+1);
-                this.fillBucket(x, y + this.cellSize, depth+1);
-                this.fillBucket(x - this.cellSize, y, depth+1);
-                this.fillBucket(x, y - this.cellSize, depth+1);
+                this.fillBucket(x + this.cellSize, y, overrideColor,depth+1);
+                this.fillBucket(x, y + this.cellSize, overrideColor,depth+1);
+                this.fillBucket(x - this.cellSize, y, overrideColor,depth+1);
+                this.fillBucket(x, y - this.cellSize, overrideColor,depth+1);
             });
         },
         editSquare(x, y) {
