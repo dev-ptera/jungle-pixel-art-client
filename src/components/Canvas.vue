@@ -80,7 +80,7 @@ export default {
             this.canvas.addEventListener(
                 'touchmove',
                 (evt) => {
-                    if (!this.canvasEditable()) {
+                    if (!this.canvasEditable() || this.fillEnabled) {
                         return;
                     }
                     if (evt.touches && evt.touches.length === 1) {
