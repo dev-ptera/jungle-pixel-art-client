@@ -5,10 +5,6 @@
             oncontextmenu="return false;"
             v-bind:width="maxCanvasWidth"
             v-bind:height="maxCanvasHeight"
-            v-bind:style="{
-                'max-width': maxCanvasWidth * zoom + 'px',
-                'max-height': maxCanvasHeight * zoom + 'px',
-            }"
         ></canvas>
     </div>
 </template>
@@ -90,7 +86,7 @@ export default {
                     if (evt.touches && evt.touches.length === 1) {
                         const touch = evt.touches[0]; // Get the information for finger #1
                         const touchPos = this.getSquare(touch.pageX, touch.pageY);
-                        this.fillSquare(touchPos.x, touchPos.y);
+                        this.editSquare(touchPos.x, touchPos.y);
                     }
                     evt.preventDefault();
                 },
@@ -106,9 +102,7 @@ export default {
                         return;
                     }
                     const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                    this.fillEnabled
-                        ? this.fillBucket(mousePos.x, mousePos.y)
-                        : this.fillSquare(mousePos.x, mousePos.y);
+                    this.fillEnabled ?  this.fillBucket(mousePos.x, mousePos.y) : this.editSquare(mousePos.x, mousePos.y);
                 },
                 false
             );
@@ -120,7 +114,7 @@ export default {
                     }
                     if (this.mouseDown) {
                         const mousePos = this.getSquare(evt.clientX, evt.clientY);
-                        this.fillSquare(mousePos.x, mousePos.y);
+                        this.editSquare(mousePos.x, mousePos.y);
                     }
                 },
                 false
@@ -149,53 +143,66 @@ export default {
             this.context.strokeStyle = color;
             this.context.stroke();
         },
-        fillBucket(x, y) {
+        fillBucket(x, y, depth = 0) {
             const pixelKey = this.makeKey(x, y);
-            if (
-                this.pixels.get(pixelKey) ||
-                this.confirmedPixels.has(pixelKey) ||
-                x < 0 ||
-                y < 0 ||
-                x > this.maxCanvasWidth ||
-                y > this.maxCanvasHeight
-            ) {
-                return;
-            }
-            this.context.fillStyle = this.fillColor;
-            this.context.fillRect(x, y, this.cellSize, this.cellSize);
-            this.pixels.set(pixelKey, this.fillColor);
-            this.fillBucket(x + this.cellSize, y);
-            this.fillBucket(x, y + this.cellSize);
-            this.fillBucket(x - this.cellSize, y);
-            this.fillBucket(x, y - this.cellSize);
+            setTimeout(() => {
+                if (
+                    depth >= 20 ||
+                    this.pixels.get(pixelKey) ||
+                    this.confirmedPixels.has(pixelKey) ||
+                    x < 0 ||
+                    y < 0 ||
+                    x > this.maxCanvasWidth ||
+                    y > this.maxCanvasHeight
+                ) {
+                    return;
+                }
+                this.context.fillStyle = this.fillColor;
+                this.context.fillRect(x, y, this.cellSize, this.cellSize);
+                this.pixels.set(pixelKey, this.fillColor);
+                this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
+                this.fillBucket(x + this.cellSize, y, depth+1);
+                this.fillBucket(x, y + this.cellSize, depth+1);
+                this.fillBucket(x - this.cellSize, y, depth+1);
+                this.fillBucket(x, y - this.cellSize, depth+1);
+            });
         },
-        fillSquare(x, y) {
+        editSquare(x, y) {
             const pixelKey = this.makeKey(x, y);
-            const currentColor = this.pixels.get(pixelKey);
             /* Uneditable pixel */
             if (this.confirmedPixels.has(pixelKey)) {
                 return;
             }
+
             /* Remove pixel */
             if (this.eraserEnabled) {
-                if (!this.pixels.get(pixelKey)) {
-                    return;
-                }
-                this.context.clearRect(x, y, this.cellSize, this.cellSize);
-                this.pixels.delete(pixelKey);
-            } else if (!this.pixels.get(pixelKey) || currentColor !== this.fillColor) {
-                /* New/edit pixel */
                 if (this.pixels.get(pixelKey)) {
-                    this.context.clearRect(x, y, this.cellSize, this.cellSize);
+                    this.clearSquare(x, y);
+                    this.pixels.delete(pixelKey);
                 }
-                this.context.fillStyle = this.fillColor;
-                this.context.fillRect(x, y, this.cellSize, this.cellSize);
+                return;
+            }
+
+            /* Editable pixel */
+            const currentColor = this.pixels.get(pixelKey);
+            if (currentColor !== this.fillColor) {
+                if (this.pixels.get(pixelKey)) {
+                    this.clearSquare(x, y);
+                }
+                this.fillSquare(x, y, this.fillColor)
                 this.pixels.set(pixelKey, this.fillColor);
                 const action = new Map();
                 action.set(pixelKey, currentColor);
                 this.previousEvents.push(action);
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
+        },
+        fillSquare(x, y, color) {/* New/edit pixel */
+            this.context.fillStyle = color;
+            this.context.fillRect(x, y, this.cellSize, this.cellSize);
+        },
+        clearSquare(x, y) {
+            this.context.clearRect(x, y, this.cellSize, this.cellSize);
         },
         getSquare(eventX, eventY) {
             const rect = this.canvas.getBoundingClientRect();
@@ -216,9 +223,9 @@ export default {
                     this.confirmedPixels = new Set();
                     for (const key in data.pixels) {
                         const [x, y] = key.split(',');
+                        const color = data.pixels[key];
                         this.confirmedPixels.add(this.makeKey(x, y));
-                        this.context.fillStyle = data.pixels[key];
-                        this.context.fillRect(x, y, this.cellSize, this.cellSize);
+                        this.fillSquare(x, y, color);
                     }
                 })
                 .catch((err) => {
@@ -229,13 +236,11 @@ export default {
             const actions = this.previousEvents.shift();
             for (const pixelKey of actions.keys()) {
                 const [x, y] = pixelKey.split(',');
-                // TODO make this a function?
-                const fill = actions.get(pixelKey);
-                if (fill) {
-                    this.context.fillStyle = actions.get(pixelKey);
-                    this.context.fillRect(x, y, this.cellSize, this.cellSize);
+                const color = actions.get(pixelKey);
+                if (color) {
+                    this.fillSquare(x, y, color);
                 } else {
-                    this.context.clearRect(x, y, this.cellSize, this.cellSize);
+                    this.clearSquare(x, y);
                 }
             }
         },
