@@ -168,10 +168,10 @@ export default {
                 this.context.fillRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.set(pixelKey, this.fillColor);
                 this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
-                this.fillBucket(x + this.cellSize, y, overrideColor,depth+1);
-                this.fillBucket(x, y + this.cellSize, overrideColor,depth+1);
-                this.fillBucket(x - this.cellSize, y, overrideColor,depth+1);
-                this.fillBucket(x, y - this.cellSize, overrideColor,depth+1);
+                this.fillBucket(x + this.cellSize, y, overrideColor, depth + 1);
+                this.fillBucket(x, y + this.cellSize, overrideColor, depth + 1);
+                this.fillBucket(x - this.cellSize, y, overrideColor, depth + 1);
+                this.fillBucket(x, y - this.cellSize, overrideColor, depth + 1);
             });
         },
         editSquare(x, y) {
@@ -196,7 +196,7 @@ export default {
                 if (this.pixels.get(pixelKey)) {
                     this.clearSquare(x, y);
                 }
-                this.fillSquare(x, y, this.fillColor)
+                this.fillSquare(x, y, this.fillColor);
                 this.pixels.set(pixelKey, this.fillColor);
                 const action = new Map();
                 action.set(pixelKey, currentColor);
@@ -204,7 +204,8 @@ export default {
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
         },
-        fillSquare(x, y, color) {/* New/edit pixel */
+        fillSquare(x, y, color) {
+            /* New/edit pixel */
             this.context.fillStyle = color;
             this.context.fillRect(x, y, this.cellSize, this.cellSize);
         },
