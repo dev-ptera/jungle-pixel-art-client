@@ -14,13 +14,13 @@
         >
             brush
         </button>
-        <button
+       <!-- <button
             class="material-icons material-icons-outlined"
             v-on:click="toggleBucketFill"
             v-bind:class="{ 'button-active': fillEnabled }"
         >
             format_color_fill
-        </button>
+        </button> -->
         <button style="position: relative" class="material-icons material-icons-outlined" v-on:click="showColor">
             palette
             <div class="current-color" :style="{ background: color }"></div>

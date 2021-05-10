@@ -1,0 +1,15 @@
+- Read board from database after success payment.
+- Automated refund on error
+- Make nice welcome screen that works on safari browser
+- Add google analytics
+- Pixel conflict
+- Add tx hash to confirmation screen
+- Mobile undo is glitchy
+- shared art button on confirm?
+- Re-read board again on payment received to check for overwritten pixels
+- Mouse drag event annoying
+- Erasing pixels erases grid lines
+- Add hex code to color picker
+- Refactor color picker to a side-menu overlay onclick
+- Add pixel color selection tool
+- Clicking same color fill causing crash
