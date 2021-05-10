@@ -30,7 +30,8 @@
                 </div>
                 <div class="payment-address">{{ paymentAddress }}</div>
                 <div v-if="paymentAddress" class="timeout">
-                    This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds.
+                    This QR code will expire in <strong>{{ timeRemainingSeconds }}</strong> seconds. Do
+                    <strong>not</strong> close this dialog until payment has been received.
                 </div>
             </section>
 
@@ -145,7 +146,7 @@ export default {
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: 500px;
+    height: 530px;
     width: 320px;
     border-radius: 8px;
 }

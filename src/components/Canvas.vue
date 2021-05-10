@@ -35,6 +35,8 @@ export default {
             drawEnabled: Defaults.DRAW_ENABLED,
             eraserEnabled: Defaults.ERASER_ENABLED,
             previousEvents: [], // Array<Map<pixelKey, 'color'>
+            currentEditOriginal: new Map(),
+            isFilling: false,
         };
     },
     methods: {
@@ -92,9 +94,30 @@ export default {
                 },
                 false
             );
+            this.canvas.addEventListener('touchstart', () => {
+                this.currentEditOriginal = new Map();
+            }),
+                this.canvas.addEventListener(
+                    'touchend',
+                    () => {
+                        if (this.currentEditOriginal?.size > 0) {
+                            this.previousEvents.unshift(this.currentEditOriginal);
+                            this.currentEditOriginal = new Map();
+                        }
+                    },
+                    false
+                );
             // Mouse Events
-            this.canvas.onmousedown = () => (this.mouseDown = true);
-            this.canvas.onmouseup = () => (this.mouseDown = false);
+            this.canvas.onmousedown = () => {
+                this.mouseDown = true;
+                this.currentEditOriginal = new Map();
+            };
+            this.canvas.onmouseup = () => {
+                if (!this.fillEnabled) {
+                    this.previousEvents.unshift(this.currentEditOriginal);
+                }
+                this.mouseDown = false;
+            };
             this.canvas.addEventListener(
                 'click',
                 (evt) => {
@@ -105,8 +128,16 @@ export default {
                     const x = mousePos.x;
                     const y = mousePos.y;
                     if (this.fillEnabled) {
+                        if (this.isFilling) {
+                            return;
+                        }
+                        this.isFilling = true;
                         const overrideColor = this.pixels.get(this.makeKey(x, y));
+                        setTimeout(() => {
+                            this.isFilling = false;
+                        }, 500);
                         this.fillBucket(x, y, overrideColor);
+                        this.previousEvents.unshift(this.currentEditOriginal);
                     } else {
                         this.editSquare(mousePos.x, mousePos.y);
                     }
@@ -150,6 +181,7 @@ export default {
             this.context.strokeStyle = color;
             this.context.stroke();
         },
+        // This is dangerous, causing crashes in mobile + firefox when 2 fills happening at same time.  Infinite loop, but how?
         fillBucket(x, y, overrideColor, depth = 0) {
             const pixelKey = this.makeKey(x, y);
             setTimeout(() => {
@@ -164,6 +196,7 @@ export default {
                 ) {
                     return;
                 }
+                this.currentEditOriginal.set(pixelKey, this.pixels.get(pixelKey));
                 this.context.fillStyle = this.fillColor;
                 this.context.fillRect(x, y, this.cellSize, this.cellSize);
                 this.pixels.set(pixelKey, this.fillColor);
@@ -172,8 +205,9 @@ export default {
                 this.fillBucket(x, y + this.cellSize, overrideColor, depth + 1);
                 this.fillBucket(x - this.cellSize, y, overrideColor, depth + 1);
                 this.fillBucket(x, y - this.cellSize, overrideColor, depth + 1);
-            });
+            }, 5);
         },
+
         editSquare(x, y) {
             const pixelKey = this.makeKey(x, y);
             /* Uneditable pixel */
@@ -198,9 +232,7 @@ export default {
                 }
                 this.fillSquare(x, y, this.fillColor);
                 this.pixels.set(pixelKey, this.fillColor);
-                const action = new Map();
-                action.set(pixelKey, currentColor);
-                this.previousEvents.push(action);
+                this.currentEditOriginal.set(pixelKey, currentColor);
             }
             this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
         },
@@ -241,6 +273,9 @@ export default {
                 });
         },
         undo() {
+            if (this.previousEvents.length === 0) {
+                return;
+            }
             const actions = this.previousEvents.shift();
             for (const pixelKey of actions.keys()) {
                 const [x, y] = pixelKey.split(',');
@@ -249,8 +284,10 @@ export default {
                     this.fillSquare(x, y, color);
                 } else {
                     this.clearSquare(x, y);
+                    this.pixels.delete(pixelKey);
                 }
             }
+            this.emitter.emit(UserEvents.PIXEL_COUNT, this.pixels.size);
         },
     },
     mounted() {
