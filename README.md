@@ -1,5 +1,9 @@
 # jungle pixel art
 
+http://junglepixelart.com/
+
+This is a experimental pixel art community board.  Anyone can draw on in exchange for banano; the payment rate changes over time.  This board is still a work-in-progress and is currently buggy, but mostly works.  
+
 ## Project setup
 ```
 yarn install
