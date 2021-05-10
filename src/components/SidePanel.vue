@@ -14,7 +14,7 @@
         >
             brush
         </button>
-       <!-- <button
+        <!-- <button
             class="material-icons material-icons-outlined"
             v-on:click="toggleBucketFill"
             v-bind:class="{ 'button-active': fillEnabled }"
