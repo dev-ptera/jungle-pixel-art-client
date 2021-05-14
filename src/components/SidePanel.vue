@@ -2,7 +2,9 @@
     <div class="control-panel" v-bind:class="{ isTouchDevice: isTouchDevice }">
         <button class="material-icons material-icons-outlined" v-on:click="increaseZoom">zoom_in</button>
         <button class="material-icons material-icons-outlined" v-on:click="decreaseZoom">zoom_out</button>
+        <!--
         <button class="material-icons material-icons-outlined" v-on:click="undo">undo</button>
+        -->
         <button v-on:click="toggleEraser" style="line-height: 74px" v-bind:class="{ 'button-active': eraserEnabled }">
             <img src="../assets/eraser.svg" height="24" />
         </button>
