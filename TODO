@@ -13,3 +13,7 @@
 - Refactor color picker to a side-menu overlay onclick
 - Add pixel color selection tool
 - Clicking same color fill causing crash
+- Re-add the fill, but redo the implementation to be iterative and not recursive  (so much harder than expected)
+- Zoom in/out on safari & mobile causing overflow and annoyance
+- Max zoom
+- Undo functionality finiky

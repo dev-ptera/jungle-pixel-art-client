@@ -78,6 +78,12 @@ export default {
             return !this.isTouchDevice || this.drawEnabled || this.fillEnabled || this.eraserEnabled;
         },
         listenForUserEvents() {
+            // User leaving page event
+            window.onbeforeunload = function() {
+                if (this.pixels.size > 0) {
+                    return "Do you want to exit this page?";
+                }
+            }.bind(this);
             // Mobile Events
             this.canvas.addEventListener(
                 'touchmove',
